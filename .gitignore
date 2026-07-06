@@ -1,0 +1,9 @@
+# Obsidian: ignorar cache y estado local de la interfaz
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.trash/
+
+# Sistema
+.DS_Store
+Thumbs.db
