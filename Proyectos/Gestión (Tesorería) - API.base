@@ -1,21 +1,21 @@
 filters:
   and:
-    - 'file.hasTag("endpoint")'
-    - 'proyecto == "Gestión (Tesorería)"'
+    - file.hasTag("endpoint")
+    - proyecto == "Gestión (Tesorería)"
 formulas:
-  firma: 'metodo + " " + path'
+  firma: metodo + " " + path
 properties:
   metodo:
-    displayName: "Método"
+    displayName: Método
   path:
-    displayName: "Ruta"
+    displayName: Ruta
   auth:
-    displayName: "Auth"
+    displayName: Auth
   archivo:
-    displayName: "Archivo"
+    displayName: Archivo
 views:
   - type: table
-    name: "Por recurso"
+    name: Por recurso
     groupBy:
       property: recurso
       direction: ASC
@@ -27,7 +27,7 @@ views:
     summaries:
       path: Filled
   - type: table
-    name: "Por método"
+    name: Por método
     groupBy:
       property: metodo
       direction: ASC
@@ -36,10 +36,10 @@ views:
       - path
       - auth
   - type: table
-    name: "Escritura"
+    name: Escritura
     filters:
       and:
-        - 'escribe == true'
+        - escribe == true
     groupBy:
       property: recurso
       direction: ASC
@@ -48,16 +48,16 @@ views:
       - path
       - auth
   - type: table
-    name: "Protegidos (jwt)"
+    name: Protegidos (jwt)
     filters:
       and:
-        - 'auth == "jwt"'
+        - auth == "jwt"
     order:
       - recurso
       - metodo
       - path
   - type: cards
-    name: "Todos"
+    name: Todos
     order:
       - formula.firma
       - recurso
