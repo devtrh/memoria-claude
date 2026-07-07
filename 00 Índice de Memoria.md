@@ -43,6 +43,7 @@ Memoria extendida de las conversaciones que he tenido con Claude (Cowork). Cada 
 | 2026-07-06 | [[2026-07-06 - Montaje sistema de memoria Obsidian]] | [[Ops]] | Obsidian, vault, tarea programada | en-curso |
 | 2026-07-06 | [[2026-07-06 - Agrupado de conversaciones por proyecto]] | [[Ops]] | organización, PostgreSQL, MCP | cerrada |
 | 2026-07-07 | [[2026-07-07 - Compilado sesiones Gestión (Tesorería)]] | [[Gestión (Tesorería)]] | compilado de 28 sesiones (índice) | en-curso |
+| 2026-07-07 | [[2026-07-07 - Reporte ejecutivo Promotores-Comisionistas (TEAM-VERTICE)]] | eli mail | promotores, comisionistas, TEAM/VERTICE, margen | en-curso |
 | 2026-07-06 | [[2026-07-06 - Ingesta de estados de cuenta junio 2026]] | [[Gestión (Tesorería)]] | ingesta mensual PDFs, arquitectos aparte | cerrada |
 | 2026-06-25 | [[2026-06-25 - Homologar cambios del equipo y subir a git]] | [[Gestión (Tesorería)]] | git, flujo 2 personas, rama+PR | en-curso |
 | 2026-06-24 | [[2026-06-24 - Impulse — verificación masiva de comprobantes]] | [[Gestión (Tesorería)]] | Impulse, CEP, BANREGIO masivo | en-curso |
