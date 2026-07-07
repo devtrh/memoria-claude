@@ -1,0 +1,64 @@
+filters:
+  and:
+    - 'file.hasTag("endpoint")'
+    - 'proyecto == "Gestión (Tesorería)"'
+formulas:
+  firma: 'metodo + " " + path'
+properties:
+  metodo:
+    displayName: "Método"
+  path:
+    displayName: "Ruta"
+  auth:
+    displayName: "Auth"
+  archivo:
+    displayName: "Archivo"
+views:
+  - type: table
+    name: "Por recurso"
+    groupBy:
+      property: recurso
+      direction: ASC
+    order:
+      - metodo
+      - path
+      - auth
+      - archivo
+    summaries:
+      path: Filled
+  - type: table
+    name: "Por método"
+    groupBy:
+      property: metodo
+      direction: ASC
+    order:
+      - recurso
+      - path
+      - auth
+  - type: table
+    name: "Escritura"
+    filters:
+      and:
+        - 'escribe == true'
+    groupBy:
+      property: recurso
+      direction: ASC
+    order:
+      - metodo
+      - path
+      - auth
+  - type: table
+    name: "Protegidos (jwt)"
+    filters:
+      and:
+        - 'auth == "jwt"'
+    order:
+      - recurso
+      - metodo
+      - path
+  - type: cards
+    name: "Todos"
+    order:
+      - formula.firma
+      - recurso
+      - auth

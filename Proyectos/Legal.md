@@ -17,7 +17,16 @@ Nodo principal del área Legal: contratos, cumplimiento, riesgos, NDAs, litigios
 - _(se irán enlazando a medida que archivemos sesiones)_
 
 ## Datos clave
-> Contratos vigentes, vencimientos, cláusulas estándar, criterios de riesgo.
+> Datos duros del área (solo reales; usa [pendiente] si falta o no aplica). Negocio: contratos vigentes, vencimientos, cláusulas estándar, criterios de riesgo.
+- **Stack**: [pendiente]
+- **Arquitectura general**: [pendiente]
+- **Backend**: [pendiente]
+- **Frontend**: [pendiente]
+- **Base de datos**: [pendiente]
+- **Componentes reutilizables**: [pendiente]
+- **API / endpoints**: [pendiente]
+- **Despliegue / infra**: [pendiente]
+- **Seguridad**: [pendiente]
 
 ## Datos / conexiones con otros proyectos
 > Info que se cruza con otras áreas. Usa [[enlaces]].

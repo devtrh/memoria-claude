@@ -1,0 +1,8 @@
+# Filtros para rclone bisync del vault (excluye archivos volátiles/ruidosos)
+- .obsidian/workspace.json
+- .obsidian/workspace-mobile.json
+- .obsidian/cache/**
+- .trash/**
+- .git/**
+- .DS_Store
+- Thumbs.db

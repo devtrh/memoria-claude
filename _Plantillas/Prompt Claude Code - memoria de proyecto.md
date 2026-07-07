@@ -39,8 +39,16 @@ Nodo principal del área <ÁREA>: <resumen del proyecto en una línea>.
 - *Se enlazan al archivar sesiones; si no hay, conserva este placeholder.*
 
 ## Datos clave
-> Datos duros del proyecto (stack, BD y tablas, endpoints, rutas, cifras). Solo reales.
-- <dato real 1>
+> Datos duros del proyecto. Solo reales, verificados leyendo el repo. Cubre TODAS estas dimensiones (si alguna no aplica, escribe [pendiente]):
+- **Stack**: lenguajes, frameworks, librerías clave y sus versiones.
+- **Arquitectura general**: cómo se organiza (monorepo / servicios), flujo principal, patrones.
+- **Backend**: framework, estructura de carpetas, servicios, autenticación, jobs/colas.
+- **Frontend**: framework, routing, manejo de estado, estilos/UI, build.
+- **Base de datos**: motor, nombre(s), esquema, tablas principales, migraciones.
+- **Componentes reutilizables**: componentes UI / utilidades compartidas y dónde viven.
+- **API / endpoints**: rutas montadas, agrupación por recurso, autenticación.
+- **Despliegue / infra**: dónde corre (prod/dev), Docker/CI, dominios, puertos, variables de entorno.
+- **Seguridad**: solo SEÑALAR riesgos (p. ej. secretos versionados). NUNCA pegar secretos.
 
 ## Datos / conexiones con otros proyectos
 > Info que se cruza con otras áreas.
@@ -57,6 +65,10 @@ Nodo principal del área <ÁREA>: <resumen del proyecto en una línea>.
 - Usa SOLO información real que puedas verificar leyendo el repo (README, manifiestos,
   código, migraciones, docs). NUNCA inventes datos, cifras ni nombres. Si falta un dato,
   escribe `[pendiente]`.
+- Para maximizar cobertura, revisa al menos: `README`, manifiestos (`package.json`,
+  `requirements.txt`, `pom.xml`, etc.), `docker-compose*/Dockerfile`, carpetas `backend/`
+  y `frontend/` o `src/`, definición de rutas de API, migraciones/SQL, y archivos de
+  config/CI (`.env.example`, `.github/`, `nginx`, etc.). No abras `.env` ni secretos.
 - No leas ni copies secretos: si encuentras `.env`, credenciales o llaves, NO las pegues;
   solo anota su existencia como riesgo.
 - Mantén el documento CONCISO: datos y decisiones, no volcados de código.

@@ -17,7 +17,16 @@ Nodo principal del área de Contabilidad: asientos, cierres, estados financieros
 - _(se irán enlazando a medida que archivemos sesiones)_
 
 ## Datos clave
-> Cuentas, criterios contables, calendario de cierres, reglas fiscales.
+> Datos duros del área (solo reales; usa [pendiente] si falta o no aplica). Negocio: cuentas, criterios contables, calendario de cierres, reglas fiscales.
+- **Stack**: [pendiente]
+- **Arquitectura general**: [pendiente]
+- **Backend**: [pendiente]
+- **Frontend**: [pendiente]
+- **Base de datos**: [pendiente]
+- **Componentes reutilizables**: [pendiente]
+- **API / endpoints**: [pendiente]
+- **Despliegue / infra**: [pendiente]
+- **Seguridad**: [pendiente]
 
 ## Datos / conexiones con otros proyectos
 > Info que se cruza con otras áreas. Usa [[enlaces]].

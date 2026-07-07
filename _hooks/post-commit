@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+#
+# Hook post-commit: sincroniza docs/MEMORIA.md del repo -> bloque MEMORIA
+# de la nota del vault de Obsidian. Reutilizable en cualquier repo.
+#
+# Instalación recomendada (versionada, viaja con el repo):
+#   mkdir -p scripts/hooks && cp este-archivo scripts/hooks/post-commit
+#   chmod +x scripts/hooks/post-commit
+#   git config core.hooksPath scripts/hooks
+# Luego edita las 3 variables de CONFIG de abajo.
+#
+set -euo pipefail
+
+# ==================== CONFIG (edita por repo) ====================
+# Ruta del vault en formato Git Bash (C:\loki\... -> /c/loki/...)
+VAULT="/c/loki/Memoria-Claude"
+# Nota destino dentro del vault (la que tiene los marcadores MEMORIA).
+NOTE="Proyectos/POS CRM.md"
+# Archivo fuente dentro del repo.
+SRC="docs/MEMORIA.md"
+# Poner 1 para que el vault se auto-committee tras sincronizar (opcional).
+SYNC_VAULT_COMMIT=1
+# ================================================================
+
+REPO="$(git rev-parse --show-toplevel)"
+SRC_PATH="$REPO/$SRC"
+NOTE_PATH="$VAULT/$NOTE"
+
+[ -f "$SRC_PATH" ]  || { echo "[memoria] no existe $SRC; nada que sincronizar"; exit 0; }
+[ -f "$NOTE_PATH" ] || { echo "[memoria] no existe la nota: $NOTE_PATH"; exit 0; }
+
+if ! grep -q "MEMORIA:START" "$NOTE_PATH"; then
+  echo "[memoria] la nota no tiene los marcadores <!-- MEMORIA:START/END -->; omito"
+  exit 0
+fi
+
+# Reemplaza SOLO el contenido entre los marcadores con docs/MEMORIA.md.
+# awk evita problemas de escape con & o \ que sí tiene sed.
+tmp="$(mktemp)"
+awk -v src="$SRC_PATH" '
+  BEGIN { while ((getline line < src) > 0) body = body line "\n" }
+  /<!-- MEMORIA:START -->/ { print; printf "%s", body; skip=1; next }
+  /<!-- MEMORIA:END -->/   { skip=0 }
+  !skip { print }
+' "$NOTE_PATH" > "$tmp" && mv "$tmp" "$NOTE_PATH"
+
+# Actualiza la fecha del frontmatter (si existe la clave).
+sed -i "s/^actualizado:.*/actualizado: $(date +%F)/" "$NOTE_PATH" 2>/dev/null || true
+
+echo "[memoria] sincronizado $SRC -> $NOTE"
+
+# Opcional: guardar el cambio en el propio repo del vault (y publicarlo).
+if [ "$SYNC_VAULT_COMMIT" = "1" ] && [ -d "$VAULT/.git" ]; then
+  git -C "$VAULT" add "$NOTE" >/dev/null 2>&1 || true
+  git -C "$VAULT" commit -m "memoria: sync $NOTE" >/dev/null 2>&1 || true
+  git -C "$VAULT" push >/dev/null 2>&1 || true
+fi

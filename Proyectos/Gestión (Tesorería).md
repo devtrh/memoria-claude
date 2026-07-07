@@ -46,7 +46,7 @@ Nodo principal del área Gestión (Tesorería): sistema del proyecto `gestion` q
 > Info que se cruza con otras áreas. Usa [[enlaces]].
 - [[Contabilidad]] — conciliación de movimientos bancarios y asientos.
 - [[Ops]] — el catálogo de clientes proviene de la lista "OPS 2026".
-- [[Seguimiento de Proyectos]] — presupuestos y flujo de los proyectos.
+
 
 ## Pendientes
 - [ ] Dar de alta los **11 clientes faltantes** del catálogo.
@@ -54,6 +54,8 @@ Nodo principal del área Gestión (Tesorería): sistema del proyecto `gestion` q
 - [ ] Generar `INSERT` para lo aprobado en `catalogo_clientes`.
 
 ## Enlaces
+- [[Gestión (Tesorería) - API.base|Catálogo de endpoints (API)]] — 252 endpoints reales extraídos del código.
+- [[Asistente de consulta - saldos (spec)]] — spec del asistente de consulta de saldos (BD + memoria).
 - [[00 Índice de Memoria]]
 
 ## Historial de commits (auto — la actualiza el git hook; no editar a mano)

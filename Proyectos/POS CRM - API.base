@@ -1,0 +1,54 @@
+filters:
+  and:
+    - file.hasTag("endpoint")
+    - proyecto == "POS CRM"
+formulas:
+  firma: metodo + " " + path
+  bloquea_viewer: if(escribe && auth == "jwt", "sí", "")
+properties:
+  metodo:
+    displayName: Método
+  path:
+    displayName: Ruta
+  auth:
+    displayName: Auth
+  formula.bloquea_viewer:
+    displayName: Bloquea viewer
+views:
+  - type: table
+    name: Por recurso
+    groupBy:
+      property: recurso
+      direction: ASC
+    order:
+      - metodo
+      - path
+      - auth
+      - formula.bloquea_viewer
+    summaries:
+      path: Filled
+  - type: table
+    name: Por método
+    groupBy:
+      property: metodo
+      direction: ASC
+    order:
+      - recurso
+      - path
+      - auth
+  - type: table
+    name: Escritura (protegidos)
+    filters:
+      and:
+        - escribe == true
+    order:
+      - recurso
+      - metodo
+      - path
+      - auth
+  - type: cards
+    name: Todos
+    order:
+      - formula.firma
+      - recurso
+      - auth

@@ -17,7 +17,16 @@ Nodo principal para el seguimiento y gestión de proyectos: avances, hitos, resp
 - _(se irán enlazando a medida que archivemos sesiones)_
 
 ## Datos clave
-> Lista de proyectos activos, hitos clave, responsables.
+> Datos duros del área (solo reales; usa [pendiente] si falta o no aplica). Negocio: lista de proyectos activos, hitos clave, responsables.
+- **Stack**: [pendiente]
+- **Arquitectura general**: [pendiente]
+- **Backend**: [pendiente]
+- **Frontend**: [pendiente]
+- **Base de datos**: [pendiente]
+- **Componentes reutilizables**: [pendiente]
+- **API / endpoints**: [pendiente]
+- **Despliegue / infra**: [pendiente]
+- **Seguridad**: [pendiente]
 
 ## Datos / conexiones con otros proyectos
 > Info que se cruza con otras áreas. Usa [[enlaces]].

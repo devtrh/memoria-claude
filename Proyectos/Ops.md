@@ -24,6 +24,15 @@ Nodo principal del área Ops: operaciones y gestión de clientes (lista/catálog
 - Lista **OPS 2026** de clientes, conciliada contra `catalogo_clientes` (BD `tesoreria`): 57 registrados · 8 dudosos · 11 faltantes.
 - Ejecutivos: Rosa → ROSSY, Nancy Arias → NANCY, Marco, Xochitl.
 - [pendiente] Confirmar alcance, sistemas y BD propios de Ops (si aplica).
+- **Stack**: [pendiente]
+- **Arquitectura general**: [pendiente]
+- **Backend**: [pendiente]
+- **Frontend**: [pendiente]
+- **Base de datos**: [pendiente]
+- **Componentes reutilizables**: [pendiente]
+- **API / endpoints**: [pendiente]
+- **Despliegue / infra**: [pendiente]
+- **Seguridad**: [pendiente]
 
 ## Datos / conexiones con otros proyectos
 > Info que se cruza con otras áreas. Usa [[enlaces]].
