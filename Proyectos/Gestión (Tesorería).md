@@ -23,7 +23,23 @@ Nodo principal del área Gestión (Tesorería): sistema del proyecto `gestion` q
 - Roles y control de acceso (admin, tesorero, rol control JR, rol Impulse de usuarios).
 
 ## Conversaciones relacionadas
-- *Aún sin conversaciones archivadas; se enlazarán al archivar sesiones.*
+> Compiladas el 2026-07-07 desde 28 sesiones de Claude Code (2026-05-20 → 07-07). Índice completo: [[2026-07-07 - Compilado sesiones Gestión (Tesorería)]].
+
+**Sesiones clave (nota propia):**
+- [[2026-05-20 - OCR robusto de comprobantes (SitesPay)]]
+- [[2026-06-07 - Extractores bancarios — bugs, corrección y reproceso]]
+- [[2026-06-15 - Flujo Tarik — frontales, caja, saldos y retornos]]
+- [[2026-06-19 - Haberes — filtro por proveedor con vista unificada]]
+- [[2026-06-19 - Relación automática de movimientos Tarik y Catania]]
+- [[2026-06-22 - Saneo masivo de la BD — descripción, signos y saldos]]
+- [[2026-06-23 - Soporte extractor SANTANDER-PYME (2 columnas)]]
+- [[2026-06-24 - Impulse — verificación masiva de comprobantes]]
+- [[2026-06-24 - Catálogo de Clientes — búsqueda por CLABE y multi-cuenta]]
+- [[2026-06-24 - Corrección de 12 movimientos con signo invertido]]
+- [[2026-06-25 - Homologar cambios del equipo y subir a git]]
+- [[2026-07-06 - Ingesta de estados de cuenta junio 2026]]
+
+**Documentos fuente:**
 - Documento fuente: `docs/Clientes/Conciliacion clientes OPS 2026.md` (conciliación catálogo OPS 2026).
 - Documento fuente: `docs/flujo_automatizacion.md` (flujos de automatización de tesorería).
 - Documento fuente: `docs/superpowers/plans/2026-05-28-tesoreria-2026-carga-y-borrado-masivo.md` (plan de carga masiva + borrado).
