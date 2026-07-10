@@ -39,6 +39,10 @@ Memoria extendida de las conversaciones que he tenido con Claude (Cowork). Cada 
 
 | Fecha | Conversación | Proyecto | Temas | Estado |
 |-------|--------------|----------|-------|--------|
+| 2026-07-09 | [[2026-07-09 - Tarea 4 - Saneo extractor bancario y fix nomina]] | [[Gestión (Tesorería)]] | extractor, CLABE 085, BANREGIO dedup, ordenante=beneficiario, pagos servicio→ras/convenio, edición CLABE superusuario, fix nómina, deploy | cerrada |
+| 2026-07-10 | [[2026-07-10 - Tarea 3 — Esquema con detalle de empresa (frontales homologado)]] | [[Gestión (Tesorería)]] | esquema/dispersión, frontales, homologación, grupos | en-curso |
+| 2026-07-10 | [[2026-07-10 - Tarea 2 — Movimientos exportables, beneficiario-ordenante y alias en grupos]] | [[Gestión (Tesorería)]] | movimientos CSV, filtros Día/Mes, beneficiario/ordenante, alias grupos, deploy reconciliado | en-curso |
+| 2026-07-09 | [[2026-07-09 - Tarea 1 — Concentrado, cobertura de correo y alias de clientes]] | [[Gestión (Tesorería)]] | Concentrado, cobertura correo, alias clientes, homologación | en-curso |
 | 2026-07-06 | [[2026-07-06 - Auditoria UX proyecto tickets]] | [[Sistema de Tickets]] | UX, React, accesibilidad, seguridad | en-curso |
 | 2026-07-06 | [[2026-07-06 - Montaje sistema de memoria Obsidian]] | [[Ops]] | Obsidian, vault, tarea programada | en-curso |
 | 2026-07-06 | [[2026-07-06 - Agrupado de conversaciones por proyecto]] | [[Ops]] | organización, PostgreSQL, MCP | cerrada |
