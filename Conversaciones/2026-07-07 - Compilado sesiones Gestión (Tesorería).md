@@ -52,6 +52,7 @@ estado: en-curso
 | 07-07 | Reporte de comisionistas *(proyecto `eli mail`)* | comisionistas, reportes 2026 — cross-proyecto | 1 | en-curso | efe94b51 |
 
 ## Notas
+- **Actualización 2026-07-13:** las **19 sesiones que aún conservan su `.jsonl`** ahora tienen **transcript legible completo** en `transcripts/` (ver [[_Índice de transcripts — Gestión (Tesorería)]]) **y** nota-resumen curada — cobertura completa. Las demás sesiones de esta tabla ya no tienen transcript en disco y sobreviven solo como estas filas.
 - **28 sesiones** en total; **12** con nota individual, **16** solo listadas.
 - La última fila (`efe94b51`) corre en el mismo directorio pero pertenece al proyecto `eli mail` (reporte de comisionistas), no a tesorería.
 - Para el detalle técnico verificado, ver el nodo [[Gestión (Tesorería)]] (secciones *Datos clave* y el bloque auto `MEMORIA` sincronizado desde `docs/MEMORIA.md`).

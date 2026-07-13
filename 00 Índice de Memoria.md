@@ -1,7 +1,7 @@
 ---
 tipo: indice-memoria
 tags: [memoria, moc, indice]
-actualizado: 2026-07-06
+actualizado: 2026-07-13
 ---
 
 # 🧠 Índice de Memoria — Conversaciones con Claude
@@ -12,7 +12,8 @@ Memoria extendida de las conversaciones que he tenido con Claude (Cowork). Cada 
 
 ## Cómo usar esta memoria
 - Al iniciar una sesión nueva, pídele a Claude: *"lee mi carpeta `Memoria-Claude` en el vault y úsala como contexto"*.
-- Cada conversación vive en `Conversaciones/` con formato `AAAA-MM-DD - Título.md`.
+- Cada conversación vive en `Conversaciones/` con formato `AAAA-MM-DD - Título.md` (resumen curado).
+- Además, en `Conversaciones/transcripts/` está la **conversación completa y legible** de cada sesión (por si se necesita el contexto crudo, no solo el resumen). Ver [[_Índice de transcripts — Gestión (Tesorería)]].
 - El frontmatter (`tipo`, `fecha`, `tags`, `estado`) permite filtrar y buscar con Dataview o la búsqueda de Obsidian.
 
 ## Nodos principales (proyectos)
@@ -48,16 +49,22 @@ Memoria extendida de las conversaciones que he tenido con Claude (Cowork). Cada 
 | 2026-07-06 | [[2026-07-06 - Agrupado de conversaciones por proyecto]] | [[Ops]] | organización, PostgreSQL, MCP | cerrada |
 | 2026-07-07 | [[2026-07-07 - Compilado sesiones Gestión (Tesorería)]] | [[Gestión (Tesorería)]] | compilado de 28 sesiones (índice) | en-curso |
 | 2026-07-07 | [[2026-07-07 - Reporte ejecutivo Promotores-Comisionistas (TEAM-VERTICE)]] | eli mail | promotores, comisionistas, TEAM/VERTICE, margen | en-curso |
+| 2026-07-07 | [[2026-07-07 - Vault Obsidian como fuente de contexto y comisionistas.base]] | [[Gestión (Tesorería)]] | Obsidian como contexto, consultas ad-hoc, comisionistas.base | en-curso |
 | 2026-07-06 | [[2026-07-06 - Ingesta de estados de cuenta junio 2026]] | [[Gestión (Tesorería)]] | ingesta mensual PDFs, arquitectos aparte | cerrada |
 | 2026-06-25 | [[2026-06-25 - Homologar cambios del equipo y subir a git]] | [[Gestión (Tesorería)]] | git, flujo 2 personas, rama+PR | en-curso |
 | 2026-06-24 | [[2026-06-24 - Impulse — verificación masiva de comprobantes]] | [[Gestión (Tesorería)]] | Impulse, CEP, BANREGIO masivo | en-curso |
 | 2026-06-24 | [[2026-06-24 - Catálogo de Clientes — búsqueda por CLABE y multi-cuenta]] | [[Gestión (Tesorería)]] | catálogo clientes, CLABE, multi-cuenta | cerrada |
 | 2026-06-24 | [[2026-06-24 - Corrección de 12 movimientos con signo invertido]] | [[Gestión (Tesorería)]] | cadena de saldos, signos | cerrada |
+| 2026-06-24 | [[2026-06-24 - Consulta — tabla de clientes y subclientes]] | [[Gestión (Tesorería)]] | catalogo_clientes, 3 tablas de clientes | cerrada |
 | 2026-06-23 | [[2026-06-23 - Soporte extractor SANTANDER-PYME (2 columnas)]] | [[Gestión (Tesorería)]] | extractor SANTANDER PYME 2 columnas | cerrada |
 | 2026-06-22 | [[2026-06-22 - Saneo masivo de la BD — descripción, signos y saldos]] | [[Gestión (Tesorería)]] | descripción, signos, saldos, reproceso | en-curso |
 | 2026-06-19 | [[2026-06-19 - Relación automática de movimientos Tarik y Catania]] | [[Gestión (Tesorería)]] | CLABE→grupos Tarik/Catania, backfill | cerrada |
 | 2026-06-19 | [[2026-06-19 - Haberes — filtro por proveedor con vista unificada]] | [[Gestión (Tesorería)]] | Haberes, filtro proveedor, navegación | cerrada |
+| 2026-06-19 | [[2026-06-19 - Clusterización de movimientos (análisis serio)]] | [[Gestión (Tesorería)]] | clasificación, clustering, reglas, cortada 401 | cerrada |
+| 2026-06-16 | [[2026-06-16 - Catálogos Clientes — saldo calculado, multi-cuenta, ejecutivos y CSV Tarik]] | [[Gestión (Tesorería)]] | saldo calculado, multi-cuenta, búsqueda exacta, ejecutivos, deploy ligero | cerrada |
 | 2026-06-15 | [[2026-06-15 - Flujo Tarik — frontales, caja, saldos y retornos]] | [[Gestión (Tesorería)]] | Tarik, frontales, caja, retornos | cerrada |
+| 2026-06-15 | [[2026-06-15 - Alta de CLABEs y clientes no registrados (en periodo)]] | [[Gestión (Tesorería)]] | alta clientes 325-333, cruce catálogos, CSV corrupto | cerrada |
+| 2026-06-12 | [[2026-06-12 - Búsqueda por UUID y flujo git de 2 personas (scripts)]] | [[Gestión (Tesorería)]] | búsqueda UUID, deploy backend, scripts inicio/sincronizar/cerrar, PRs | cerrada |
 | 2026-06-07 | [[2026-06-07 - Extractores bancarios — bugs, corrección y reproceso]] | [[Gestión (Tesorería)]] | extractores, bugs, reproceso, QA | cerrada |
 | 2026-05-20 | [[2026-05-20 - OCR robusto de comprobantes (SitesPay)]] | [[Gestión (Tesorería)]] | OCR, comprobantes imagen, SitesPay | cerrada |
 
@@ -68,7 +75,9 @@ Memoria extendida de las conversaciones que he tenido con Claude (Cowork). Cada 
 - [ ] Memoria Obsidian: guiar instalación del MCP de Postgres para la BD local.
 
 ## Notas
-- Hay **16 conversaciones** listadas: 3 originales + 13 de [[Gestión (Tesorería)]] (compilado 2026-07-07 de **28 sesiones**; ver [[2026-07-07 - Compilado sesiones Gestión (Tesorería)]] para la tabla completa). A medida que tengamos más sesiones, se añadirán aquí como nuevas notas y filas.
+- **2026-07-13:** [[Gestión (Tesorería)]] quedó con **cobertura completa**: las **19 sesiones** con transcript disponible ahora tienen **nota-resumen curada** + **transcript legible** en `Conversaciones/transcripts/` (índice: [[_Índice de transcripts — Gestión (Tesorería)]]). Se agregaron 6 notas-resumen que antes solo estaban listadas en el compilado. Las ~9 sesiones más viejas del compilado ya no tienen `.jsonl` en disco: sobreviven solo como filas del [[2026-07-07 - Compilado sesiones Gestión (Tesorería)]].
+- Para subir las conversaciones de **otros proyectos** con este mismo método, ver [[Subir conversaciones de un proyecto a la memoria]].
+- A medida que tengamos más sesiones, se añadirán aquí como nuevas notas y filas.
 - Consulta opcional con Dataview (si tienes el plugin):
 
 ```dataview
