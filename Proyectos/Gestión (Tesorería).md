@@ -6,7 +6,7 @@ tags: [proyecto, gestion, tesoreria, finanzas]
 proyecto_codigo: gestion
 bd: tesoreria
 estado: activo
-actualizado: 2026-07-13
+actualizado: 2026-07-14
 ---
 
 # 💰 Gestión (Tesorería)
@@ -87,7 +87,7 @@ tipo: proyecto
 nombre: Gestión (Tesorería)
 tags: [proyecto, gestion]
 estado: activo
-actualizado: 2026-07-13
+actualizado: 2026-07-14
 ---
 # 💰 Gestión (Tesorería)
 Nodo principal del área Gestión (Tesorería): app web de tesorería (bancos, haberes, adeudos, gastos, inversiones, nómina, cuentas, efectivos, operaciones) con OCR de CEP y chat interno.
@@ -134,6 +134,9 @@ Nodo principal del área Gestión (Tesorería): app web de tesorería (bancos, h
 - [ ] No hay CI configurado (`.github/` ausente) — [pendiente] definir pipeline de build/test.
 - [ ] `backend/lib/desfragmentador/runner.js` se importa en `analisis.js` pero no está en git (vive solo en el server desplegado). Mitigado: el `require` ahora es tolerante (try/catch) → el backend arranca local aunque falte el módulo; solo se degrada el procesado de PDFs de Análisis.
 - [ ] Bug en prod: `GET /api/nomina/colaboradores` truena (`column "c.id_cliente" must appear in the GROUP BY clause`) — bloquea el tablero de colaboradores.
+- [ ] **(Tarea 4) 286 CLABEs con longitud ≠ 18** en `colaboradores` (truncadas / cuentas mal guardadas) — sin analizar, caso aparte. Nota: el alta/reemplazo por UI ya valida checksum Banxico (2026-07-13), pero estas viejas quedaron sembradas directo en `colaboradores_cuentas` sin validar.
+- [ ] **(Tarea 4 · seguridad) Rotar el password de BD prod hardcodeado** en `ingestar_mes.cjs` — sacarlo a `.env`.
+- [ ] **(Tarea 4) 16 grupos duplicados ambiguos BANREGIO** (comisiones / cuota admin) — dejados a revisión manual del usuario.
 
 ## Registro de cambios
 > Append-only, lo más reciente arriba: <fecha> — qué cambió · por qué · archivos.
