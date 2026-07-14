@@ -1,7 +1,7 @@
 ---
 proyecto: Vault Obsidian
 repo: C:\loki
-actualizado: 2026-07-10
+actualizado: 2026-07-14
 ---
 
 # Vault Obsidian
