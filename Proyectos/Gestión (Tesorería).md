@@ -128,6 +128,7 @@ Nodo principal del área Gestión (Tesorería): app web de tesorería (bancos, h
 - Integraciones externas: OCR/CEP bancarios (BANREGIO/Impulse), proveedores "Tarik" (frontales/clientes), Gemini (`@google/genai`) y Anthropic SDK en backend.
 
 ## Pendientes
+- [ ] **(Clasificación · DECISIÓN usuario) Traspasos sin clasificar** — de los clas6 restantes hay `TRA …-(BE) Traspaso a cuenta: {num}` (~184), `TRASPASO DE RECURSOS DE LA CUENTA` (~151), `TRA TRASPASO ENTRE CUENTAS-(NB) Recepcion…` (~24). Preguntas por responder: (1) ¿"traspaso entre cuentas propias" (mismo grupo) = clase interna / AJUSTE_BANCARIO / no clasificar? (2) ¿"traspaso a cuenta de tercero" = TRANSFERENCIA_TERCEROS? (3) ¿cómo distinguir interno vs tercero — por la CLABE/cuenta destino contra empresas del grupo, o por texto? Otros grupos sin patrón por decidir: SPEI CSV sin marcador (MEDICROBA/PEIBO), `PAGO CUENTA DE TERCERO` con signo invertido (Capa 3), cheques (`Cobro de cheque`/`CHEQUE PAGADO`), vacíos.
 - [x] DB principal confirmada: **`DB_NAME=tesoreria`** (schema `public`); la BD `aud` es el 2º pool. `colaboradores` vive en `tesoreria.public`.
 - [ ] Ejecutar SQLs manuales pendientes e importar colaboradores (script `03`).
 - [ ] Rotar contraseñas iniciales sembradas y sacarlas del código.
