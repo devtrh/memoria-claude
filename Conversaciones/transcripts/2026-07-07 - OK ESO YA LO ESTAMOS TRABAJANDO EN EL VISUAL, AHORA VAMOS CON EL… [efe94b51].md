@@ -1,7 +1,7 @@
 ---
 tipo: transcript-conversacion
 fecha: 2026-07-07
-fecha_fin: 2026-07-10
+fecha_fin: 2026-07-14
 titulo: "OK ESO YA LO ESTAMOS TRABAJANDO EN EL VISUAL, AHORA VAMOS CON EL…"
 proyecto: "Gestión (Tesorería)"
 session_id: efe94b51-51f5-470e-abf8-7ad44533195e
@@ -12,9 +12,9 @@ tags: [memoria, transcript, conversacion]
 
 > [!info] Metadatos de la sesion
 > - **Sesion:** `efe94b51-51f5-470e-abf8-7ad44533195e`
-> - **Rango:** 2026-07-07 → 2026-07-10
+> - **Rango:** 2026-07-07 → 2026-07-14
 > - **Rama(s) git:** `main`, `feat/concentrado-comisionistas`, `docs/impulse-multi-riel-spec`, `fix/clabe-085-banregio-extractor`, `fix/nomina-colaboradores-groupby`, `diego/esquema-detalle-empresa`
-> - **Turnos:** 8 de usuario · 8 de Claude
+> - **Turnos:** 12 de usuario · 12 de Claude
 > - **Proyecto:** Gestión (Tesorería)
 > - **Claude Code:** v2.1.205
 > - _Transcript legible (solo texto usuario/Claude, sin herramientas). Secretos evidentes enmascarados como «REDACTADO». Fuente: `.claude/projects/.../efe94b51-51f5-470e-abf8-7ad44533195e.jsonl`._
@@ -774,3 +774,270 @@ No hice `push` del repo `memoria-claude` (solo escribí las notas). Si quieres, 
 ¿Seguimos con lo que quedó pendiente (coordinar la homologación / confirmar los 60 alias de revisión / diseñar el auto-llenado), o con otra tarea?
 
 > ⚙️ *Herramientas: Bash×6, Write, Read, Edit*
+
+### 👤 Usuario · 16:12
+
+si vamos con lo que quedo pendiente por favor
+
+### 🤖 Claude · 16:12
+
+Han pasado unos días y veo que avanzó trabajo en paralelo (Tarea 3 = frontales homologado). Antes de seguir con lo pendiente, me re-oriento con checks rápidos (solo lectura): estado de git, si mis 30 alias siguen en prod, y si la homologación ya se mergeó:
+
+Buenas noticias del re-orientamiento: **mi Concentrado se mergeó a main (PR #21)** y **f1-frontales también (PR #20)** — o sea, la coordinación ya no es un problema: ambos conviven en main. Lo único suelto son mis **scripts de alias/cobertura** (aún sin commitear) y el spec. Verifico que mis 30 alias sigan en prod y si el spec entró a main:
+
+Re-orientación lista. El estado ahora es **mucho más limpio** de lo que estaba hace 5 días:
+
+- ✅ **Concentrado en main** (PR #21) + **f1-frontales en main** (PR #20) → **la coordinación ya no es problema**, conviven.
+- ✅ **Spec del alias YA está en main**; mis **30 alias siguen en prod** (`catalogo_cliente_nombres` = 128); las 13 cargas del Concentrado intactas.
+- 🔸 Único suelto: `seed_alias.cjs` y `cc_cobertura_analisis.cjs` **sin commitear** (housekeeping rápido).
+
+Así que "lo pendiente" se reduce a estos hilos. Te pregunto por dónde le entramos (el git chico lo hago como housekeeping en cualquiera):
+
+Va — terminemos la homologación. Reviso los 60 sugerencias + 5 altas y aplicamos los buenos. Primero re-corro el seed (dry-run) contra el estado actual de prod (el catálogo cambió: f1-frontales se mergeó, y mis 30 auto ya están dentro), para tener la lista fresca:
+
+Progreso: ahora **277 exactos** (subieron con los 30 alias), **57 a revisar**, **5 altas**, 2 auto nuevos. Veo los 57 para ayudarte a decidir rápido — muchos suelen ser sufijos (MAQ/NOM/IAS/CASH) del mismo cliente:
+
+Ya los tengo. Muchos son variantes claras (sufijos MAQ/NOM/IAS/CASH/plaza o abreviaturas), pero hay generic-collisions y errores. Para juzgar bien los dudosos necesito la **razón social/RFC** de los clientes matcheados. Los traigo:
+
+Con la razón social ya puedo juzgar los 57 con confianza (y confirma que varios "sospechosos" **sí son correctos** — ej. `ARTURO SALAZAR` → cliente 95 cuya **razón social ES "Arturo Salazar Palomares"**; `KING BULL` → 197 rz "King Bull Corporation"; `UNIDAD CONDOMINAL HACIENDA` → 277 rz "…Hacienda El Campanario"). Mi clasificación:
+
+## ❌ Rechazar (5) — falsos por palabra genérica / homónimo
+| Candidato | Matcheó | Por qué NO |
+|---|---|---|
+| OPERADORA BIENESTA | 176 (Op. Hoteles Oaxaca) | genérico "OPERADORA" |
+| PETRO | 183 (Pedro A. Torres) | PETRO ≠ PEDRO |
+| ALEJANDRA BUENO | 282 (Alejandro Esquivel) | es la cliente **315** (Isis Alejandra Bueno), no 282 |
+| PARQUE TECNOLOGICO | 143 (Asoc. Estudios Jurídicos) | genérico "PARQUE" |
+| TERMO LOGISTICS | 188 (Terminal Logistics) | TERMO ≠ TERMINAL |
+
+## ❓ Dudosos (5) — necesito tu decisión
+- **MEDICAMENTOS CORP VER**, **MEDICAMENTOS DEL BAJIO**, **MEDICAMENTOS DEL BAJIO CORP QRO** → todos al cliente **185** cuyo nombre y razón social es solo **"MEDICAMENTOS"** (entrada genérica). ¿185 es el cliente de medicamentos correcto y agrupo los 3 como alias suyo, o son clientes distintos?
+- **GOPLAS / JAMI** → 105 (GOPLAS) **vs** **JAMI Y GOPLAS** → 297 (Plásticos JAMI): el catálogo tiene GOPLAS y JAMI como **2 clientes separados**. ¿GOPLAS/JAMI es uno o dos?
+
+## ✅ Aceptar (~47) — variantes confirmadas por razón social
+Todo lo demás: sufijos MAQ/NOM/IAS/CASH/SINDICATO/INNTEC/plaza (Tepic/Obregón/Jurica), abreviaturas y typos que la razón social confirma (ARTURO SALAZAR=95, KING BULL=197, GERARDO GARCIA=151, ARTIBUS OPUES=124, RAUL MAC NAIR=179, LILIANA DURAN=88, MAGOVE=175, ATR/ADACA=305, etc.). Más los 2 auto nuevos (ESTUDIO BOSCO, MANCILLA IAS).
+
+¿Aplico los **~47 aceptados + 2 auto** a prod (excluyo los 5 rechazados, dejo pendientes los 5 dudosos hasta tu decisión) y re-mido la cobertura?
+
+> ⚙️ *Herramientas: Bash×5, AskUserQuestion*
+
+### 👤 Usuario · 17:25
+
+EN EFECTO ESTOS SI SON DISTINTOS ❌ Rechazar (5) — falsos por palabra genérica / homónimo
+MEDICAMENTOS ES EL CLIENTE PRINCIPAL, MEDICAMENTOS CORP VER = MEDICAMENTOS CORPORATIVO VERACRUZ, ES UN SUBCLIENTE, MEDICAMENTOS DEL BAJIO CORP QRO = MEDICAMENTOS CORP BAJIO, ES UN SUBCLIENTE.
+
+GOPLAS Y JAMI SON RFC DISTINTOS PERO PERMANECEN AL MISMO DUEÑO/CLIENTE 
+
+Cliente	GO Y JA
+GOPLAS
+—	
+GOPLAS
+GOP940819L44	
+002180037139844921
+BANAMEX
+ROSSY	$72,642,370.83	125	Activo
+
+Subcliente	PLASTICOS JAMI
+JAMI
+GO Y JA	
+PLASTICOS JAMI SA DE CV
+PJA800520198	
+085906379520310363
+(085)
+3984395
+002180037139843951
+BANAMEX
+044180001017760085
+SCOTIABANK
+3 cuentas
+ROSSY	$45,237,340.13	94	Activo
+
+MANCILLA IAS, ESTA MEZCLADO PORQUE ES DEL CLIENTE MANCILLA, Y EL METODO ES IAS, 
+estudio bosco es un cliente Cliente	ESTUDIO BOSCO SODI SA DE CV
+ESTUDIO BOSCO MAQ
+—	
+ESTUDIO BOSCO SODI SA DE CV
+EBS220726LX8	
+014180655095536086
+SANTANDER
+NAYELI	$2,368,404.30	65	Activo
+
+### 🤖 Claude · 17:27
+
+Clarísimo, gracias — eso cambia el manejo de varios:
+
+- **5 rechazos**: confirmados distintos → fuera. ✅
+- **MEDICAMENTOS CORP VER / DEL BAJIO / CORP QRO**: NO son alias, son **subclientes** de 185 (Corporativo Veracruz / Corp Bajío) → van al track de **alta de subclientes** (`cliente_padre_id=185`), no como alias.
+- **GOPLAS/JAMI**: mismo dueño, RFC distintos — GO Y JA (105) principal + PLÁSTICOS JAMI (297) subcliente. Los dejo como alias en sus ids matcheados (105 y 297).
+- **MANCILLA IAS → 93** (método IAS) y **ESTUDIO BOSCO → 169**: alias válidos ✅.
+
+Escribo el script que aplica los revisados **excluyendo** rechazos + subclientes, y saca aparte la lista de subclientes a dar de alta:
+
+Correcto: **51 a insertar**, 8 excluidos (5 rechazos + 3 subclientes MEDICAMENTOS). Aplico a prod y re-mido cobertura:
+
+Espera — la cobertura **cayó** a 74% en vez de subir. Eso NO es que los alias sean malos: es un **bug en mi medidor**. Con muchos alias, el resolver colapsa todas las grafías de un cliente a UNA sola entidad de correo indexada (la primera), y si esa no tiene ops ese mes, falla el match aunque otra grafía sí las tenga. El fix correcto: **canonicalizar ambos lados a `cliente_id`** y agregar las ops de correo por cliente canónico. Reescribo esa parte del medidor:
+
+Sigue bajo (73%) — más bajo que el 89.4% original. Necesito saber si el 89% viejo estaba **inflado** por el fuzzy agresivo (token/inclusión) o si mi canonOf tiene un bug que sub-cuenta. Debug directo en Dic 2025: para cada cliente "sin correo", ¿existe realmente su correo ese mes bajo otra grafía?
+
+Debug clave: Dic-2025 tiene solo **9 clientes sin correo**, pero el grande es **DISTRIBUIDORA DE EQUIPO MED ($7.64M)** → canon C9. Le puse alias, así que o el correo de Dic usa OTRA grafía no aliaseada, o **realmente no hay correo de ese cliente en Dic** (y el 99% viejo era inflado por el fuzzy). Verifico en el correo:
+
+**Encontré la causa — y es importante.** El correo de Dic tiene **"DISTRIBUIDORA YUMANPACK"**, NO "DISTRIBUIDORA DE EQUIPO MED". El matcher **viejo los casaba por el token "DISTRIBUIDORA"** (falso positivo) → por eso marcaba 99%. Mi canonOf ya NO comete ese error. O sea:
+
+> **El 89% estaba inflado por matches falsos. La cobertura HONESTA es ~73% cliente-mes.** Los alias no bajaron nada real — al hacer el matcher canónico por `cliente_id`, se cayeron los falsos positivos y quedó el número verdadero.
+
+Lo bueno: **pocos clientes GRANDES** explican casi todo el hueco (Pareto). Ej. DISTRIBUIDORA DE EQUIPO MED = **$7.64M** solo en Dic (20% del mes). Confirmar esos pocos sube mucho el número. Te traigo el top "sin correo" por pesos de 2025:
+
+**Pareto brutal**: **DISTRIBUIDORA DE EQUIPO MED (C9)** solo = ~**$56M** del ~$88M sin correo (Abr $21M, Dic $7.6M, Mar/Jul $6.6M…). Y en el correo existe **"DISTRIBUIDORA YUMANPACK"**. La pregunta del millón (literal): **¿DISTRIBUIDORA DE EQUIPO MED = DISTRIBUIDORA YUMANPACK?** Si sí, un alias recupera ~$56M y la cobertura salta.
+
+Te agrupo el "sin correo" por cliente (no por mes) para que rules solo un puñado de clientes grandes en vez de 130 filas:
+
+## La cobertura honesta y dónde está el hueco
+
+Corregido el medidor (ahora canónico por `cliente_id`, sin falsos positivos):
+
+- **Cobertura real 2025: ~73% cliente-mes** (el 89% previo estaba inflado por matches falsos tipo DISTRIBUIDORA↔YUMANPACK).
+- **Hueco total "sin correo": $88.8M en 45 clientes** — pero **2 clientes = 74%**:
+
+| Cliente (sin correo) | Total | % del hueco | ¿En correo? |
+|---|--:|--:|---|
+| **DISTRIBUIDORA DE EQUIPO MED** | $56.4M | **63%** | existe "DISTRIBUIDORA YUMANPACK" |
+| **DIEMSA** | $9.5M | 11% | "DIEMSA" no aparece en correo |
+| VIALLI, BPACK, PROGRESSIVE, TROPPER… | resto | ~26% | mayormente cola / timing |
+
+El top 18 clientes = **95% del hueco**. O sea: no hay que revisar 130 filas, sino **rulear un puñado de clientes grandes**.
+
+## Necesito tu conocimiento del negocio en los 2 grandes
+
+Estos dos deciden si la cobertura real es ~73% o ~88%:
+
+1. **DISTRIBUIDORA DE EQUIPO MED** (reporte, $56M) — en el correo la solicitud llega como **"DISTRIBUIDORA YUMANPACK"** (ejecutivo Marco, esquema AS). ¿Es **el mismo cliente/dueño** (le pongo alias YUMANPACK→C9 y recupero $56M), o son **distintos** (y entonces esos $56M los captura Eli a mano)?
+2. **DIEMSA** ($9.5M) — no hay "DIEMSA" en el correo. ¿Llega con **otro nombre** (¿cuál?) o es **100% manual**?
+
+Los demás (VIALLI, BPACK, PROGRESSIVE, TROPPER, etc.) casi seguro son cola/timing o manuales — si quieres, después los barremos. Pero con tu respuesta a esos 2 cierro la foto real de cobertura. ¿Qué me dices de DISTRIBUIDORA↔YUMANPACK y DIEMSA?
+
+> ⚙️ *Herramientas: Write, Bash×7, Read×2, Edit×3*
+
+### 👤 Usuario · 17:47
+
+Cliente	YUMANPACK	—	
+DISTRIBUIDORA YUMANPACK
+DYU211029CC3	
+072680011758053649
+BANORTE
+MARCO	$15,898,000.00	31	Activo
+
+es un cliente, pero tenemos varios clientes que empiezan por distribuidora . por ejemplo intento borrar esta y no me deja /gestion/api/catalogos/catalogo-clientes/9:1  Failed to load resource: the server responded with a status of 500 ()
+installHook.js:1 [API] /catalogos/catalogo-clientes/9: Error: update or delete on table "catalogo_clientes" violates foreign key constraint "ops_clientes_catalogo_cliente_id_fkey" on table "ops_clientes"
+    at lt (index-rrJuDRNW.js:637:4790)
+    at async Qe (index-rrJuDRNW.js:867:59)
+overrideMethod @ installHook.js:1
+
+Cliente	DISTRIBUIDORA DE EQUIPO MED
+DISTRIBUIDORA DE EQUIPO MEDICO DEL BAJIO
+—	
+—
+—	—	—	$0.00	0	Activo
+
+Cliente	DIEMSA	—	
+DISTRIBUIDORA Y EXPORTADORA DE MEDICAMENTOS SA DE CV
+DEM981027F59	
+072680011893651647
+BANORTE
+MARCO	$5,469,000.00	28	Activo
+
+diemsa es un cliente que ya tenemos
+
+### 🤖 Claude · 17:48
+
+Gracias, eso aclara todo — y confirma que **mi matcher acertó**: YUMANPACK es un cliente **distinto** (no merges). Y me das la clave del patrón: **el correo usa la razón social larga** ("DISTRIBUIDORA Y EXPORTADORA DE MEDICAMENTOS" = DIEMSA), mientras el reporte usa el nombre corto. Veo las grafías reales en el correo para esos 2 clientes y alías las que falten:
+
+Déjame verificar directamente por qué DISTRIBUIDORA no casa, porque el correo SÍ tiene "DISTRIBUIDORA DE EQUIPO MEDICO DEL BAJIO" (27 ops) y le puse alias a C9 — debería casar. Test directo del canon + alias:
+
+Ambos SÍ resuelven a **cliente 9** (correo y reporte). Entonces DEBERÍAN casar en los meses donde el correo tiene ops (Ene-Nov). El $56M sin-correo no cuadra con eso. Sospecho que la corrida de cobertura fue **antes** de aplicar los alias. Re-corro fresco AHORA y reviso DISTRIBUIDORA por mes:
+
+Ambos resuelven a C9 pero sigue sin casar — hay un bug real en la agregación. Instrumento directo: replico exacto la lógica de cobertura y veo qué meses tiene `mail['C9']` y por qué no cruza con el reporte:
+
+**Confirmado — y es la respuesta real a tu pregunta original.** Instrumenté el correo: las ops de "DISTRIBUIDORA DE EQUIPO MEDICO DEL BAJIO" (que SÍ resuelve a C9) existen **solo en Ene, Feb y Nov 2025** (+ 2026). Los meses grandes del reporte (Abr $21M, Mar, Jul, Ago, Sep, May, Dic) **no tienen correo de ese cliente**. O sea:
+
+> El $56M de DISTRIBUIDORA sin-correo es **real**: ese cliente **no manda solicitud por correo** esos meses (o no se capturó). **No es un problema de homologación** — el alias está bien puesto, pero el dato no está en el correo.
+
+## Conclusión honesta de la cobertura
+
+- **Cobertura real 2025: ~73% de los pesos** son rastreables por correo. El 89% previo estaba **inflado por matches falsos** (DISTRIBUIDORA↔YUMANPACK); al canonicalizar por `cliente_id` quedó el número verdadero y **confiable para auto-llenar** (no mete data equivocada).
+- **~27% (~$88M) es manual**, concentrado en pocos clientes cuya nómina **no llega por este correo**: DISTRIBUIDORA DE EQUIPO MED ($56M) + DIEMSA ($9.5M) = ~$66M.
+
+## La homologación quedó **terminada**
+- **81 alias aplicados** (30 auto + 51 revisados contigo), correctos. Subieron la **precisión** del match (tumbaron falsos positivos). No pueden recuperar el 27% porque **ese dato no existe en el correo**, no porque falten alias.
+- Los 3 subclientes MEDICAMENTOS (CORP VER / Bajío) quedaron en `subclientes_a_dar_alta.csv` para el track de catálogo.
+
+Esto responde directo lo que buscabas: **~73% auto-llenable, ~27% que Eli seguirá capturando** (y sabemos exactamente qué clientes).
+
+**¿Cómo cerramos?** Opciones: (a) **investigar por qué esos clientes grandes no están en el correo** (¿la extracción del PST los saltó, o usan otro canal?) — podría subir el 73% si es un hueco de extracción; (b) **aceptar 73% como la cobertura y pasar a** consolidar git / diseñar el auto-llenado SP2; (c) barrer el resto de la cola (los ~26 clientes chicos).
+
+> ⚙️ *Herramientas: Bash×4*
+
+### 👤 Usuario · 18:05
+
+hay que hacer intentar la opcion a) y la opcion c)
+
+### 🤖 Claude · 18:05
+
+Va — hago **(a) investigar el hueco** de los clientes grandes y **(c) barrer la cola**. Empiezo por (a): ver si es un **hueco de extracción** (el correo existe pero el parser de operaciones lo saltó) o si **usan otro canal**. Para eso necesito el corpus **crudo** de correos (`correos.sqlite.gz`), no solo `operaciones_aud`. Lo descomprimo y reviso:
+
+Descomprimido (544MB). Ahora veo el esquema y busco los clientes grandes en el correo crudo por mes:
+
+`correos` tiene asunto + cuerpo_texto + fecha + montos. Busco los clientes grandes en el correo **crudo** por mes (asunto + cuerpo), para ver si el email existe en los meses que faltan:
+
+**Hallazgo grande (opción A): SÍ hay hueco de extracción.** El correo **crudo** tiene emails de **DIEMSA** en Abr-Dic 2025 (Abr:5, May:13…) y de **DISTRIBUIDORA** en Abr-Dic (Abr:20!), pero `operaciones_aud` **no generó operaciones** para ellos esos meses. O sea: los correos llegaron, pero el **parser de layouts/operaciones los saltó**. (El nombre "EQUIPO MEDICO" no está en el cuerpo — viene en el adjunto/layout.) Veo un muestreo de esos emails para confirmar que son solicitudes de nómina reales:
+
+Muy revelador:
+- **DIEMSA = hueco de extracción CLARO**: hay emails "DIEMSA" de **Marco Sanchez** en Abril (uno con **24 adjuntos, $10.65M**), pero `operaciones_aud` no tiene NINGUNA operación DIEMSA. El correo llegó, el extractor lo saltó.
+- **DISTRIBUIDORA**: los hits de "%distribuidora%" eran ruido (emails CASH/CATANIA de Susana Cruz que mencionan "distribuidora"), no solicitudes de EQUIPO MEDICO.
+
+Entonces el hueco es **parte extracción, parte otro-nombre**. Hago el chequeo sistemático que sirve para **A y C a la vez**: para cada cliente sin-correo, ¿hay emails con su nombre en el **asunto** + con adjuntos (= solicitud de nómina) en el correo crudo?
+
+**Este es el hallazgo clave de la sesión.** Casi todos los clientes "sin correo" **SÍ mandan su nómina por correo** — el problema es que `operaciones_aud.csv` (8.7k ops) es una **extracción incompleta**:
+
+| Cliente "sin correo" | Emails con adjuntos (crudo) | ¿Realidad? |
+|---|--:|---|
+| TROPPER | 216 en 9 meses | **sí emailea** — extracción lo saltó |
+| VIALLI | 129 | sí |
+| ESPE SEGURIDAD | 99 | sí |
+| EMPLEOS TI | 70 · BPACK 37 · XIRO 34 · DIEMSA 20 · ATZCO 18 · PERFILES 18 | sí |
+| **DISTRIBUIDORA DE EQUIPO MED** | **0** | genuinamente sin correo (o con otro asunto) — el $56M |
+
+O sea: **el 73% estaba limitado por la extracción, no por la realidad.** El corpus crudo `correos` (152,879 emails, con asunto/adjuntos/montos) tiene lo que falta. Voy a **re-medir la cobertura contra el corpus completo** para darte el número REAL:
+
+El `node -e` no vio la variable `SCR` de bash. Lo corrijo interpolando la ruta:
+
+El 49.9% es un **sub-conteo poco fiable** (muchos asuntos no son literalmente el nombre del cliente — ej. "NÓMINA QNA1"), así que ese número no sirve como cobertura real. Pero lo importante ya quedó claro: **el cuello de botella es la extracción, no el correo.**
+
+Falta el pivote: **DISTRIBUIDORA DE EQUIPO MED ($56-66M)** — 0 emails por nombre. Como su identidad vive en el **adjunto**, busco ahí (nombres de archivo) antes de concluir si es manual o solo otro asunto:
+
+**Investigación completa (A y C). El pivote quedó claro:**
+
+- **DISTRIBUIDORA DE EQUIPO MED ($56M)**: solo **2 adjuntos** y ~7 menciones en TODO el corpus crudo. **Genuinamente NO manda su nómina por este correo** → es manual de verdad (o usa otro canal). Es el 63% del hueco.
+- **El resto del hueco = extracción incompleta** (recuperable): DIEMSA, VIALLI, TROPPER, ESPE, BPACK, XIRO, EMPLEOS TI, ATZCO… SÍ emailean (cientos de correos con adjuntos), pero `operaciones_aud` los saltó. Los correos vienen de varios ejecutivos (Marco Sanchez, Susana Cruz, Rosa Joaquín…) → `operaciones_aud` se armó de un subconjunto de buzones.
+
+## Respuesta real a "cuánto por correo vs manual"
+
+| | Cobertura | Qué significa |
+|---|--:|---|
+| **Hoy (operaciones_aud)** | ~73% | limitado por extracción incompleta |
+| **Alcanzable** (si la extracción captura a todos los que sí emailean) | **~83%** | +$32M recuperables (DIEMSA/VIALLI/TROPPER/ESPE/…) |
+| **Manual genuino** | **~17%** | dominado por **1 cliente**: DISTRIBUIDORA DE EQUIPO MED ($56M) |
+
+## Clasificación de la cola (opción C)
+- **Recuperables (extracción)**: DIEMSA, VIALLI, TROPPER, ESPE SEGURIDAD, BPACK, XIRO, EMPLEOS TI, ATZCO, PERFILES MODULARES, PROVEEDORA DE RIELES, PULSOS, IRRITEC, RODRIGUEZ ESCAMILLA.
+- **Manuales genuinos**: DISTRIBUIDORA DE EQUIPO MED, PROGRESSIVE, ANDRES GONZALEZ RGZ, GRUPO PARALELO, MANUEL PADILLA.
+
+## Lo que esto significa para el auto-llenado (SP2)
+- **El cuello de botella NO es el correo ni la homologación** (esa quedó bien) — es que **`operaciones_aud` es una extracción parcial**. El corpus completo (`correos`, 152k emails + 62k adjuntos) sí tiene la nómina de casi todos.
+- **SP2 debe alimentarse del corpus completo** (re-extraer operaciones de todos los buzones/adjuntos), no de `operaciones_aud`.
+
+## Pregunta para cerrar
+**DISTRIBUIDORA DE EQUIPO MED** ($56M, sin correo real): ¿sabes por qué no llega su nómina por correo — es un cliente que manejan aparte / otro canal, y Eli lo captura a mano? Con eso confirmo que ese 17% es manual estructural y no otra falla.
+
+¿Seguimos con re-extraer el corpus completo (subir el 73%→~83%), o cerramos aquí la investigación y consolidamos?
+
+> ⚙️ *Herramientas: TodoWrite, Bash×8*

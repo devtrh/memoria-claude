@@ -1,7 +1,7 @@
 ---
 tipo: transcript-conversacion
 fecha: 2026-06-22
-fecha_fin: 2026-07-10
+fecha_fin: 2026-07-14
 titulo: "ayudame por favor a revisar toda la db, para verificar si algun…"
 proyecto: "Gestión (Tesorería)"
 session_id: 32f8e947-d65f-4309-832c-1bfaf99bdf1d
@@ -12,11 +12,11 @@ tags: [memoria, transcript, conversacion]
 
 > [!info] Metadatos de la sesion
 > - **Sesion:** `32f8e947-d65f-4309-832c-1bfaf99bdf1d`
-> - **Rango:** 2026-06-22 → 2026-07-10
-> - **Rama(s) git:** `diego/tarik-flujo`, `main`, `diego/buscar-relacion-haberes-export`, `fix/ingesta-junio-2026`, `feat/concentrado-comisionistas`, `fix/clabe-085-banregio-extractor`, `fix/nomina-colaboradores-groupby`
-> - **Turnos:** 112 de usuario · 112 de Claude
+> - **Rango:** 2026-06-22 → 2026-07-14
+> - **Rama(s) git:** `diego/tarik-flujo`, `main`, `diego/buscar-relacion-haberes-export`, `fix/ingesta-junio-2026`, `feat/concentrado-comisionistas`, `fix/clabe-085-banregio-extractor`, `fix/nomina-colaboradores-groupby`, `diego/esquema-detalle-empresa`
+> - **Turnos:** 115 de usuario · 115 de Claude
 > - **Proyecto:** Gestión (Tesorería)
-> - **Claude Code:** v2.1.183
+> - **Claude Code:** v2.1.205
 > - _Transcript legible (solo texto usuario/Claude, sin herramientas). Secretos evidentes enmascarados como «REDACTADO». Fuente: `.claude/projects/.../32f8e947-d65f-4309-832c-1bfaf99bdf1d.jsonl`._
 
 ---
@@ -5899,3 +5899,113 @@ La causa real: el menú del filtro se **recortaba por el `overflow-hidden`** del
 Prueba: filtro de Día → "Seleccionar todo" quita/pone todos; el menú se ve completo aunque haya pocos movimientos. ¿Ya quedó bien?
 
 > ⚙️ *Herramientas: Edit×7, Read×4, Bash×5*
+
+### 👤 Usuario · 16:08
+
+ok y que estabamos haciendo antes de solucionar esto
+
+### 🤖 Claude · 16:08
+
+Antes de este bug del filtro, terminamos el **quick fix de dedup de clientes** (una fila por cliente, sin las badges de color) que salió del brainstorming.
+
+Y quedaron **pendientes 3 features** que pediste sobre las tablas de entidades (Empresas/Frontales/Proveedores/Clientes/Bancos):
+
+1. **Columnas ordenables** — poder ordenar esas tablas por sus columnas (como en Movimientos).
+2. **Botón de exportar** — exportar el contenido de la tabla que estás viendo (Clientes, Empresas, etc.).
+3. **Proveedores agrupados como Grupos** — poder agruparlos primero (estilo cascada de Grupos) y luego escoger.
+
+Las 1 y 2 son rápidas y aplican a todas esas tablas. La 3 es un poco más de trabajo (replicar la cascada de Grupos para Proveedores).
+
+¿Sigo con las tres en orden (1 → 2 → 3), o prefieres que arranque con alguna en particular?
+
+### 👤 Usuario · 16:14
+
+adelante com las 3 tareas por favor
+
+### 🤖 Claude · 16:15
+
+¡Vamos! Arranco con las 3. Primero investigo la estructura de las tablas de entidades (ResultTable + los render) para unificar orden + export:
+
+Ya tengo el panorama. Plan:
+- **Tareas 1+2**: componente genérico `EntityTable` (orden por columna + botón Exportar) → convierto Clientes, Empresas, Frontales, Colaboradores, Bancos.
+- **Tarea 3**: Proveedores usa la **cascada de Grupos** (filtrada a tipo proveedor), reusando lo ya hecho.
+
+Empiezo con `EntityTable`:
+
+Ahora convierto los render a `EntityTable` con columnas. Empresas:
+
+Colaboradores:
+
+Bancos internos:
+
+Ahora Task 3: Proveedores como cascada. Ubico NAVEGABLES + gruposFiltrados + los renders de proveedores:
+
+Ahora el render de la pestaña Proveedores como cascada. Veo el bloque standalone de bancos/grupos + guards:
+
+Faltan: guard del bloque de resultados, sección 'todos', quitar línea del else, y que el fetch no dispare para tabs client-side. Los ubico:
+
+Build para verificar (conversiones EntityTable + cascada proveedores + posibles unused):
+
+Build OK. Verifico si quedaron render sin usar (renderProveedores/renderBancos) para limpiar:
+
+Ambos sin uso — los elimino (código muerto). Los leo:
+
+Elimino renderProveedores (dead):
+
+Build + deploy + commit:
+
+Deployado. La rama volvió a cambiar (`diego/esquema-detalle-empresa`). Para no enredar, respaldo mi archivo, me paro limpio en main y lo restauro ahí:
+
+2324 líneas es ruido de fin-de-línea (CRLF/LF). Verifico lo importante: ¿826ae5b (mi último main) es ancestro de origin/main? ¿Alguien más tocó BusquedaView?
+
+Perfecto: 826ae5b es ancestro y **nadie más tocó BusquedaView** (los commits nuevos son "concentrado", otros archivos). Es seguro poner mi archivo en main. Hago el git limpio:
+
+El checkout abortó pero el reset movió `diego/esquema` a origin/main. Mi diff staged son SOLO mis cambios (153+/129-, no ruido). Commiteo aquí y empujo ese commit directo a main (ff), luego restauro la rama:
+
+Commit 814f411 en main ✅. Ahora restauro `diego/esquema` a su estado de origin (f025f51) y alineo main local:
+
+✅ **Las 3 tareas listas, desplegadas y en `main`** (814f411). Git quedó reconciliado (la rama `diego/esquema` se restauró intacta). Recarga con **Ctrl+Shift+R**.
+
+## 1. Columnas ordenables
+Creé un componente genérico **`EntityTable`**: haz **clic en cualquier encabezado** para ordenar (▲/▼, alterna asc/desc). Aplica a **Clientes, Empresas, Frontales, Colaboradores y Bancos** — comportamiento idéntico en todas.
+
+## 2. Botón Exportar
+Cada una de esas tablas tiene ahora un botón **Exportar** (arriba a la derecha) que baja a **CSV lo que estás viendo** (respeta el orden aplicado). Las columnas **CLABE/Cuenta salen con apóstrofe** para que Excel no las muestre en notación científica.
+
+## 3. Proveedores como cascada (como Grupos)
+La pestaña **Proveedores** ahora **agrupa** (los grupos tipo *proveedor*: CATANIA, TARIK, FER AVILA, INTERNO, AR…) igual que Grupos: clic en uno → **resumen + elementos** → **Ver movimientos**. Es client-side (se ve con o sin búsqueda). Se quitó el listado plano.
+
+---
+**Nota:** durante el trabajo, la rama de git se cambió sola varias veces (`fix/clabe-085`, `feat/concentrado`, `diego/esquema`…) — parece un script de sincronización corriendo en segundo plano. Tuve que rescatar cada commit a `main` con cuidado; todo quedó bien y sin dañar las ramas de nadie, pero si puedes, revisa qué proceso está cambiando de rama, porque complica los despliegues.
+
+¿Reviso algo de las 3 contigo o seguimos con otra cosa?
+
+> ⚙️ *Herramientas: Bash×10, Read×6, Edit×16, Grep*
+
+### 👤 Usuario · 17:04
+
+seguimos con otra cosa, que tenemos como pendeinte
+
+### 🤖 Claude · 17:05
+
+Déjame revisar los pendientes reales (MEMORIA.md + contexto de la rama actual):
+
+Aquí está el panorama de pendientes (priorizados):
+
+## 🔴 Bugs / riesgos en prod
+- **Tablero de colaboradores roto**: `GET /api/nomina/colaboradores` truena con `column "c.id_cliente" must appear in the GROUP BY clause`. Bloquea esa vista.
+- **Seguridad**: contraseñas sembradas siguen en el código (rotar + sacarlas); y la contraseña de la BD prod hardcodeada en los scripts.
+- **`runner.js` solo vive en el server** (no está en git) → riesgo de sobrescribirlo al desplegar.
+
+## 🟡 Feature activa (rama actual `diego/esquema-detalle-empresa`)
+- **"Esquema con detalle de empresa"**: F1 (lógica pura de homologación + figura jurídica, TDD) ya está; **F2–F5 pendientes** (aplicar a la ingesta/UI).
+
+## 🟢 Proyectos documentados sin arrancar
+- **Layout de cobro por cliente/ejecutivo** — plantilla de a qué cuenta interna deposita cada cliente/ejecutivo.
+- **Concentrado (comisionistas)** — SP2/SP3 pendientes.
+- **Ingesta colaboradores desde layouts de Eli** — solo el piloto IMPULSE hecho; faltan EVSA/TROPPER/etc. (~12k trabajadores).
+- **Ajuste de 21 cuentas de trabajador** mal atribuidas como cuenta de cliente (VIALLI/ETANOL/SIERRA).
+
+¿Con cuál seguimos?
+
+> ⚙️ *Herramientas: Bash, Read, AskUserQuestion*

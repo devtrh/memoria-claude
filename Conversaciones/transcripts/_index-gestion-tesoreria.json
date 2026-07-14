@@ -1,14 +1,29 @@
 [
   {
+    "file": "2026-07-13 - agarra contexto de c obsidian memoria-claude luego de todas las… [3ff20b18].md",
+    "sessionId": "3ff20b18-e19c-473d-b55c-6aca4a97c202",
+    "shortId": "3ff20b18",
+    "fecha": "2026-07-13",
+    "fecha_fin": "2026-07-14",
+    "titulo": "agarra contexto de c:/obsidian/memoria-claude luego de todas las…",
+    "proyecto": "Gestión (Tesorería)",
+    "turnos_usuario": 2,
+    "turnos_claude": 2,
+    "ramas": [
+      "diego/esquema-detalle-empresa"
+    ],
+    "primer_prompt": "agarra contexto de c:/obsidian/memoria-claude luego de todas las conversaciones quiero que las subas a conversaciones al proyecto de gestion tesoreria ya hay una carpeta para eso que contecga todo por di un usuario requiere el contexto de la conversaciones que hubo en este equipo sobre gestion y deja un documento en el que dejes pasos para los demas proyectos para subir esas conversaciones"
+  },
+  {
     "file": "2026-07-08 - cuando estamos viendo los movimientos de un cliente que podamos… [a315f442].md",
     "sessionId": "a315f442-4df1-49ca-885a-879dee4569c1",
     "shortId": "a315f442",
     "fecha": "2026-07-08",
-    "fecha_fin": "2026-07-10",
+    "fecha_fin": "2026-07-14",
     "titulo": "cuando estamos viendo los movimientos de un cliente que podamos…",
     "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 10,
-    "turnos_claude": 10,
+    "turnos_usuario": 11,
+    "turnos_claude": 11,
     "ramas": [
       "main",
       "diego/sync-ops-catalogo",
@@ -66,11 +81,11 @@
     "sessionId": "efe94b51-51f5-470e-abf8-7ad44533195e",
     "shortId": "efe94b51",
     "fecha": "2026-07-07",
-    "fecha_fin": "2026-07-10",
+    "fecha_fin": "2026-07-14",
     "titulo": "OK ESO YA LO ESTAMOS TRABAJANDO EN EL VISUAL, AHORA VAMOS CON EL…",
     "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 8,
-    "turnos_claude": 8,
+    "turnos_usuario": 12,
+    "turnos_claude": 12,
     "ramas": [
       "main",
       "feat/concentrado-comisionistas",
@@ -86,16 +101,17 @@
     "sessionId": "f03b328a-2557-4fbb-87d4-3d7a1f9258c1",
     "shortId": "f03b328a",
     "fecha": "2026-07-06",
-    "fecha_fin": "2026-07-08",
+    "fecha_fin": "2026-07-14",
     "titulo": "ayudame por favor a subir los estados de cuenta de junio 2026, ya los…",
     "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 18,
-    "turnos_claude": 19,
+    "turnos_usuario": 21,
+    "turnos_claude": 22,
     "ramas": [
       "main",
       "fix/ingesta-junio-2026",
       "feat/concentrado-comisionistas",
-      "docs/impulse-multi-riel-spec"
+      "docs/impulse-multi-riel-spec",
+      "diego/esquema-detalle-empresa"
     ],
     "primer_prompt": "ayudame por favor a subir los estados de cuenta de junio 2026, ya los acomodamos en la carpeta de C:\\Users\\Diego\\Documents\\GitHub\\gestion react\\gestion financiera\\ESTADOS DE CUENTA PDF\\2026 recuerda que los de arquitectos se suben en la carpeta de C:\\Users\\Diego\\Documents\\GitHub\\gestion react\\gestion financiera\\ESTADOS DE CUENTA PDF\\2026\\ARQUI revisa por favor el algoritmo de automatizacion y los "
   },
@@ -104,11 +120,11 @@
     "sessionId": "4b5e7430-7c35-4a75-b3e6-afac311e8923",
     "shortId": "4b5e7430",
     "fecha": "2026-06-25",
-    "fecha_fin": "2026-07-10",
+    "fecha_fin": "2026-07-14",
     "titulo": "revisa todas las conversaciones de este equipo, archivos modificados,…",
     "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 35,
-    "turnos_claude": 36,
+    "turnos_usuario": 37,
+    "turnos_claude": 38,
     "ramas": [
       "diego/tarik-flujo",
       "main",
@@ -202,11 +218,11 @@
     "sessionId": "32f8e947-d65f-4309-832c-1bfaf99bdf1d",
     "shortId": "32f8e947",
     "fecha": "2026-06-22",
-    "fecha_fin": "2026-07-10",
+    "fecha_fin": "2026-07-14",
     "titulo": "ayudame por favor a revisar toda la db, para verificar si algun…",
     "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 112,
-    "turnos_claude": 112,
+    "turnos_usuario": 115,
+    "turnos_claude": 115,
     "ramas": [
       "diego/tarik-flujo",
       "main",
@@ -214,7 +230,8 @@
       "fix/ingesta-junio-2026",
       "feat/concentrado-comisionistas",
       "fix/clabe-085-banregio-extractor",
-      "fix/nomina-colaboradores-groupby"
+      "fix/nomina-colaboradores-groupby",
+      "diego/esquema-detalle-empresa"
     ],
     "primer_prompt": "ayudame por favor a revisar toda la db, para verificar si algun movimiento tiene la descripcion vacia o nula"
   },

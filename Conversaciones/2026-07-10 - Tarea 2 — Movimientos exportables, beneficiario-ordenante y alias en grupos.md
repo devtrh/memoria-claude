@@ -36,16 +36,20 @@ estado: en-curso
 - Un `scp` ciego habría **borrado Concentrado / revertido cambios ajenos**. Mitigación aplicada: **reconciliar** = aplicar los edits sobre la copia **actual del servidor**, no sobre git base (verificando que la única diferencia vs local fuera la divergencia del server).
 - Deploy quirúrgico: siempre **diff (server vs base) + backup** (dist con `docker cp` + copia de los archivos) antes de `scp` + rebuild. Backups en el server: `/home/devn8n/teso_deploy_backups/` y `/home/devn8n/teso_dist_backups/`.
 
-### 5. Fase 2 — diseñada y aprobada, PENDIENTE de implementar
+### 5. Fase 2 — implementada y desplegada (2026-07-14)
 - Objetivo elegido (opción segura): cuando un movimiento viene de una CLABE **no registrada** pero su beneficiario/ordenante coincide con un **alias** de un elemento, **sugerir asignarla al grupo con 1 clic** (no auto, no cambia totales hasta confirmar).
-- Diseño aprobado: endpoint **aparte** `GET /cuentas/grupos/sugerencias-nombre` (bajo demanda, no toca el `/grupos` pesado) → CLABEs con `beneficiario/ordenante ILIKE ANY(alias)` excluyendo las ya registradas; match normalizado por "contiene", alias ≥ 4 chars. UI: sección "Coinciden por nombre (N)" por grupo con botón Asignar (reusa `POST /grupos/asignar`, prellenando razón social/alias del elemento que coincidió).
+- **Backend**: endpoint **aparte** `GET /cuentas/grupos/sugerencias-nombre` (bajo demanda, no toca el `/grupos` pesado) → pre-filtro SQL `beneficiario/ordenante ILIKE ANY(alias)` excluyendo las ya registradas + confirmación en JS (normalizado "contiene", alias ≥ 4 chars); short-circuit si no hay alias.
+- **Frontend** (GruposTab): sección "**Coinciden por nombre (N)**" + badge índigo por grupo, carga no bloqueante; botón **Asignar** reusa `asignarClabeGrupo` (prefill razón social/alias del elemento).
+- **Deploy reconciliado** (backend+frontend): api.ts del server tenía Concentrado + funciones de nómina (Tarea 4) que no están en git → apliqué el delta sobre la copia del server; cuentas.js/GruposTab subidos directos (sin contenido ajeno). Verificado: endpoint → 200 (`{sugerencias:[]}` por ahora, sin alias aún), `/concentrado/meses` sigue 200. Backup `/home/devn8n/teso_deploy_backups/20260714_102159`. Bundle `index-DxtnTZj2.js`.
+- **Aceptación pendiente (UI)**: con un alias real registrado que coincida con una CLABE sin registrar, verificar que aparece la sugerencia y que "Asignar" la registra.
 
 ## Pendiente / próximos pasos
-- [ ] **Implementar Fase 2** (sugerencias por alias) — backend endpoint + UI en GruposTab.
-- [ ] **Sincronizar servidor↔git**: mergear la rama de **Concentrado** y desplegar los commits pendientes de `buscar.js`; mientras tanto cada deploy exige reconciliación manual.
+- [x] **Fase 2** (sugerencias por alias) — implementada y desplegada 2026-07-14.
+- [ ] **Aceptar Fase 2 en UI**: registrar un alias real que coincida y verificar sugerencia + Asignar.
+- [ ] **Sincronizar servidor↔git**: mergear la rama de **Concentrado** y desplegar los commits pendientes de `buscar.js`; mientras tanto cada deploy exige reconciliación manual. (La divergencia creció: la Tarea 4 metió funciones de nómina en api.ts del server que tampoco están en git.)
 - [ ] Versionar en git el trabajo de estos días (rama + PR); hasta ahora todo vive en el árbol local (el server no es repo git).
 
 ## Enlaces
 - Proyecto: [[Gestión (Tesorería)]]
 - Índice: [[00 Índice de Memoria]]
-- Specs: `docs/superpowers/specs/2026-07-08-exportar-filtrar-movimientos-cliente-design.md`, `docs/superpowers/specs/2026-07-09-otros-nombres-elementos-grupo-design.md`
+- Specs: `docs/superpowers/specs/2026-07-08-exportar-filtrar-movimientos-cliente-design.md`, `docs/superpowers/specs/2026-07-09-otros-nombres-elementos-grupo-design.md`, `docs/superpowers/specs/2026-07-14-sugerencias-clabe-por-alias-fase2-design.md`

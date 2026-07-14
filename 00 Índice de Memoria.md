@@ -1,7 +1,7 @@
 ---
 tipo: indice-memoria
 tags: [memoria, moc, indice]
-actualizado: 2026-07-13
+actualizado: 2026-07-14
 ---
 
 # 🧠 Índice de Memoria — Conversaciones con Claude
@@ -40,6 +40,8 @@ Memoria extendida de las conversaciones que he tenido con Claude (Cowork). Cada 
 
 | Fecha | Conversación | Proyecto | Temas | Estado |
 |-------|--------------|----------|-------|--------|
+| 2026-07-14 | [[2026-07-14 - Tarea BBVA — Calidad de extraccion medida + diseno del fix]] | [[Gestión (Tesorería)]] | calidad extracción, score, BANORTE falsa alarma, BBVA roto, diseño fix, SPEI | en-curso |
+| 2026-07-13 | [[2026-07-13 - Sistema de exportacion de conversaciones al vault + plan F2 esquema]] | [[Gestión (Tesorería)]] | Obsidian, exportador transcripts, cobertura completa, redacción secretos, plan F2 esquema | en-curso |
 | 2026-07-09 | [[2026-07-09 - Tarea 4 - Saneo extractor bancario y fix nomina]] | [[Gestión (Tesorería)]] | extractor, CLABE 085, BANREGIO dedup, ordenante=beneficiario, pagos servicio→ras/convenio, edición CLABE superusuario, fix nómina, deploy | cerrada |
 | 2026-07-10 | [[2026-07-10 - Tarea 3 — Esquema con detalle de empresa (frontales homologado)]] | [[Gestión (Tesorería)]] | esquema/dispersión, frontales, homologación, grupos | en-curso |
 | 2026-07-10 | [[2026-07-10 - Tarea 2 — Movimientos exportables, beneficiario-ordenante y alias en grupos]] | [[Gestión (Tesorería)]] | movimientos CSV, filtros Día/Mes, beneficiario/ordenante, alias grupos, deploy reconciliado | en-curso |

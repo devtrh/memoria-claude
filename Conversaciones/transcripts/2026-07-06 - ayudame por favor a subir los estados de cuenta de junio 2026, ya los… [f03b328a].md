@@ -1,7 +1,7 @@
 ---
 tipo: transcript-conversacion
 fecha: 2026-07-06
-fecha_fin: 2026-07-08
+fecha_fin: 2026-07-14
 titulo: "ayudame por favor a subir los estados de cuenta de junio 2026, ya los…"
 proyecto: "Gestión (Tesorería)"
 session_id: f03b328a-2557-4fbb-87d4-3d7a1f9258c1
@@ -12,11 +12,11 @@ tags: [memoria, transcript, conversacion]
 
 > [!info] Metadatos de la sesion
 > - **Sesion:** `f03b328a-2557-4fbb-87d4-3d7a1f9258c1`
-> - **Rango:** 2026-07-06 → 2026-07-08
-> - **Rama(s) git:** `main`, `fix/ingesta-junio-2026`, `feat/concentrado-comisionistas`, `docs/impulse-multi-riel-spec`
-> - **Turnos:** 18 de usuario · 19 de Claude
+> - **Rango:** 2026-07-06 → 2026-07-14
+> - **Rama(s) git:** `main`, `fix/ingesta-junio-2026`, `feat/concentrado-comisionistas`, `docs/impulse-multi-riel-spec`, `diego/esquema-detalle-empresa`
+> - **Turnos:** 21 de usuario · 22 de Claude
 > - **Proyecto:** Gestión (Tesorería)
-> - **Claude Code:** v2.1.183
+> - **Claude Code:** v2.1.205
 > - _Transcript legible (solo texto usuario/Claude, sin herramientas). Secretos evidentes enmascarados como «REDACTADO». Fuente: `.claude/projects/.../f03b328a-2557-4fbb-87d4-3d7a1f9258c1.jsonl`._
 
 ---
@@ -1712,3 +1712,272 @@ Cada uno es un ciclo: causa raíz (ver descripciones reales) → golden-test →
 Llevamos una sesión muy larga y un win sólido. ¿Seguimos ya con el siguiente (recomiendo **BANREGIO** por volumen, o **BANORTE** por peor score), o hacemos checkpoint aquí y continuamos después?
 
 > ⚙️ *Herramientas: Edit×6, Bash×13, Agent, Read×2, Write×2*
+
+### 👤 Usuario · 16:09
+
+hacemos un checkpoint y continuamos
+
+### 🤖 Claude · 16:10
+
+Checkpoint: guardo el estado en memoria (nueva área de trabajo) y luego sigo con BANREGIO.
+
+Agrego el puntero al índice de memoria y arranco la investigación de BANREGIO (causa raíz del spei-sin-clabe/rastreo). Leo MEMORY.md y consulto descripciones reales:
+
+**Hallazgo BANREGIO (¡otro falso positivo del score!):** las filas "SPEI sin clabe/rastreo" NO son transferencias reales — son **comisiones SPEI** ("TRA COM. SPEI", "IVA SPEI") y **devoluciones** ("INT SPEI-Devolucion SPEI: YHXJ241"). Esas **no llevan contraparte/CLABE por naturaleza**. Los SPEI reales de BANREGIO (`TRA SPEI-{rastreo} SPEI, {banco}, {clabe18}, {nombre}`) **sí** extraen bien la CLABE.
+
+O sea: el 47% de BANREGIO está inflado por comisiones/devoluciones (como pasó con PEIBO). El score sobre-marca. Corrijo el score (métricas SPEI solo para transferencias reales) y agrego el puntero de memoria:
+
+Refino el score (SIN_CONTRAPARTE incluye COM./devoluciones; métricas SPEI solo para transferencias con contraparte):
+
+Re-corro el score refinado (panorama verdadero) y limpio el temporal:
+
+🎯 **Corrección enorme (medición ahora fiel):**
+- **Global: 55.8% → 88.6%!** El score sobre-marcaba muchísimo (comisiones/devoluciones contadas como "SPEI sin clabe").
+- **BANREGIO: 52% → 95%** ✅ — su extracción es **excelente**; el 47% era casi todo comisiones/devoluciones. **NO es problema.**
+- **BANBAJIO 63%→91%, PEIBO 84%, MULTIVA 82%, SANTANDER 86%** — todos bien.
+
+**Los únicos bancos REALMENTE rotos son BANORTE (41%) y BBVA (46%).** Me ahorré atacar 3 no-bugs (PEIBO, BANREGIO, BANBAJIO) gracias a medir bien.
+
+Actualizo memoria (BANREGIO fine), commiteo el score, e investigo la causa raíz de **BANORTE** (SPEI TEF sin clabe/rastreo):
+
+BANORTE tiene **dos formatos** de SPEI enviado:
+- **Detallado**: "COMPRA ORDEN DE PAGO SPEI … =REFERENCIA CTA/CLABE: {18} … CVE.RASTREO:{x}" → **sí** trae CLABE/rastreo.
+- **Mínimo**: "TRANSFERENCIA - ENVIO; (SPEI; BANCA POR INTERNET) REFERENCIA: {ref}" → **NO trae contraparte/CLABE/rastreo en el texto** — no se puede extraer lo que no está.
+
+Otra vez el patrón: el mínimo infla el score. Cuantifico cuánto es mínimo (artefacto) vs detallado que falle (bug real):
+
+BANORTE **detallado = 580/580 con CLABE y rastreo (100%)** → `parseBanorte` NO está roto para el formato real. Los que “fallan” son: 42 mínimos (el PDF solo trae `REFERENCIA: N`, sin contraparte — inextraíbles) y 63 “otro”. Veo qué es “otro”:
+
+El bucket **“otro” = 63 filas, todas depósitos “COMPENSACION DESFASE SPEI RASTREO: {x}”** — son compensaciones internas del SPEI: traen rastreo (63/63) pero **no** tienen CLABE de contraparte por naturaleza (como una comisión). Y las 42 “mínimo” solo traen `REFERENCIA: N`.
+
+Resumen BANORTE:
+
+| Formato | n | CLABE | Rastreo | ¿Bug de parser? |
+|---|---|---|---|---|
+| detallado (CTA/CLABE) | 580 | 100% | 100% | **No — perfecto** |
+| COMPENSACION DESFASE | 63 | 0% (no aplica) | 100% | No — no hay contraparte |
+| TRANSFERENCIA-ENVIO mínimo | 42 | 0% | 0% | Por confirmar (¿el PDF sí la trae?) |
+
+Antes de concluir que BANORTE es otro falso positivo, confirmo si el formato “mínimo” **sí** trae contraparte en el PDF crudo (y el desfragmentador la pierde = bug real) o **no** la trae (límite del origen). Localizo en qué estados están:
+
+El formato mínimo aparece en **AILEC BANORTE** (dic-25 y jun-26) + ARBOLEDA/BANDEZ junio. Reviso el texto crudo del PDF de AILEC junio para ver si la contraparte **sí** está impresa (bug del desfragmentador) o **no** (límite del origen):
+
+**Hallazgo decisivo** — mira los montos:
+
+```
+02-JUN-26 TRANSFERENCIA - ENVIO; (SPEI; BANCA POR INTERNET) REFERENCIA: 0020626   5.00   → 461,007.37
+02-JUN-26 I.V.A. ORDEN DE PAGO SPEI REFERENCIA: 0020626                            0.80   → 461,006.57
+12-JUN-26 COMPRA ORDEN DE PAGO SPEI ... CTA/CLABE: 058680000011450231 BENEF:ETANOL ... 150,000.00
+```
+
+“TRANSFERENCIA - ENVIO; (SPEI; BANCA POR INTERNET)” de BANORTE = **la comisión de $5 del SPEI**, y “I.V.A. ORDEN DE PAGO SPEI” = el IVA ($0.80) de esa comisión. **No son transferencias** — no tienen contraparte porque son el cargo del banco. La transferencia real es la línea “COMPRA ORDEN DE PAGO SPEI … CTA/CLABE …” que **sí** trae CLABE (580/580 = 100%).
+
+Es el **cuarto** banco que el score marca en falso (tras PEIBO/BANREGIO/BANBAJIO). Confirmo que TODOS los “TRANSFERENCIA - ENVIO” son ~$5 (comisión), no transferencias reales, y de paso miro los casos reales de BBVA:
+
+BBVA es **distinto** — ahí sí hay bug real. Mira:
+
+```
+T17 SPEI ENVIADO BANAMEX 4,200.00 ... Ref. 0044854490 002 00005204167422277293 BNET01002606120044854490 WILLIAMS
+```
+
+El SPEI ENVIADO de BBVA **sí** trae contraparte (código banco `002`, cuenta/CLABE, rastreo `BNET…`, y nombre `WILLIAMS`) pero el parser no la extrae. En cambio BANORTE quedó confirmado: “TRANSFERENCIA - ENVIO” = **42 filas, todas exactamente $5.00** (comisión), y “I.V.A. ORDEN DE PAGO SPEI” = **282 filas, todas $0.80** (IVA de la comisión). No son transferencias.
+
+Primero corrijo el **score** para que deje de marcar esos artefactos de BANORTE, y saco la foto real:
+
+Ahora el panorama es nítido. Tras quitar los artefactos de BANORTE:
+
+- **Global 90.0%** · **BANORTE saltó 41%→84%** (era casi todo comisión $5) · **9 de 10 bancos ≥84%**.
+- El **único** banco genuinamente roto es **BBVA (46%, n=308)**: contraparte 47%, spei_sin_clabe 18%, clas6 24%. Concentrado en UNIENDO BBVA (71 contraparte vacía) y BANDEZ BBVA.
+
+Caracterizo BBVA por sub-patrón para saber si es arreglable en `parseBBVA` (regex) o es fragmentación del desfragmentador (más hondo), antes de proponerte el plan:
+
+Precisa el diagnóstico de BBVA. Hay **tres capas** distintas:
+
+- **PAGO CUENTA DE TERCERO: 56/56 son clas6** → no es extracción, es **clasificación** (ninguna regla matchea "PAGO CUENTA DE TERCERO" → cae a DESCONOCIDO). Fix fácil y de bajo riesgo (regla nueva → clas 3), igual que el fix clas6 SPEI que ya desplegué.
+- **Contraparte**: unas filas **sí** traen el dato en la descripción (`BNET {cuenta} {NOMBRE} REF`, o `{cod} {clabe} BNET{rastreo} {nombre}`) → arreglable en `parseBBVA`. Otras traen el **pie de página** "BBVA MEXICO, S.A., INSTITUCION DE BANCA MULTIPLE…" en lugar de la contraparte → el desfragmentador mal-unió (página partida) = capa dura.
+
+Cuantifico el split “dato-en-descripción” vs “pie de página” para no sobre-prometer:
+
+La regex del split quedó doble-escapada (SQL literal), pero la **muestra** lo dice claro: el bucket “sin dato claro” en realidad **sí trae el nombre** (`BNET {cuenta} ARANZA MENDEZ GOME Ref.`, `TRACTOR 2024 JLHR`, `MAITE MENDEZ GOMEZ`) — es recuperable con regex en `parseBBVA`. Solo una minoría es realmente inextraíble (`PAGO CUENTA DE TERCERO 10,125.00` a secas, o el pie de página).
+
+Limpio los temporales de sondeo y consolido:
+
+El archivo del score volvió a su versión previa (revert intencional del entorno, ya conocido en esta sesión) — pero **mis conclusiones no dependen del script**: salen de hechos directos de la BD (los $5.00 de BANORTE, los 580/580 con CLABE, los nombres embebidos de BBVA). Trabajo sobre esos hechos.
+
+Actualizo la memoria del proyecto con el hallazgo (BANORTE era falsa alarma; solo BBVA es real y está en 3 capas) y luego te presento el plan:
+
+## Resultado de medir "los 3" antes de tocarlos
+
+Medir con cuidado cambió la conclusión: **de los 3 bancos "peores", 2 eran falsa alarma.** Solo BBVA está genuinamente roto.
+
+**BANORTE — falsa alarma (era el peor con 41%).** El "41%" eran 100% artefactos de medición, no bugs:
+- `TRANSFERENCIA - ENVIO; (SPEI; BANCA POR INTERNET)` = la **comisión de $5** del SPEI → 42 filas, **todas exactamente $5.00**.
+- `I.V.A. ORDEN DE PAGO SPEI` = el IVA de esa comisión → 282 filas, **todas $0.80** (el score no matcheaba "I.V.A." con puntos).
+- `COMPENSACION DESFASE SPEI` = compensación interna (sin contraparte por naturaleza).
+- La transferencia **real** de BANORTE (`COMPRA ORDEN DE PAGO SPEI … CTA/CLABE:{18} … BENEF:… CVE RASTREO:`) → **580/580 con CLABE y rastreo (100%)**. `parseBanorte` está perfecto.
+
+Tras corregir el score: **BANORTE 41%→84%, global 88.6%→90.0%, y 9 de 10 bancos ≥84%.** (Es la 4ª vez que el score inicial sobre-marca — antes PEIBO, BANREGIO, BANBAJIO. Medir bien ahorró atacarlos en vano.)
+
+**BBVA — el único real (46%, n=308).** Concentrado en UNIENDO BBVA (71 contraparte vacía) y BANDEZ BBVA. Se parte en 3 capas:
+
+| Capa | Qué es | n aprox. | Esfuerzo/riesgo |
+|---|---|---|---|
+| **1 · clasificación** | `PAGO CUENTA DE TERCERO` cae 56/56 a clas6 (ninguna regla lo matchea) | ~71 | **Bajo** — regla nueva → clas 3, golden-test, igual que el fix clas6 SPEI ya desplegado |
+| **2 · parseBBVA** | La contraparte **sí** está en la descripción (`BNET {cuenta} {NOMBRE} Ref`, `SPEI ENVIADO … {clabe} BNET{rastreo} {nombre}`) pero no se extrae | ~90 | **Medio** — regex + golden-tests + re-enriquecer |
+| **3 · desfragmentador** | El texto trae el **pie de página** ("BBVA MEXICO… BANCA MULTIPLE") en vez de la contraparte, o filas sin dato | minoría | **Alto** — cirugía del desfragmentador (2 intentos previos fallidos) |
+
+Cualquier fix de extractor implica el **deploy reconciliado** al servidor (prod), así que quiero confirmar el alcance contigo antes de tocar.
+
+Entendido — **solo diseño, sin tocar nada ni desplegar.** Escribo el spec de BBVA (capas 1–3) con golden-tests propuestos para que lo revises.
+
+Primero aterrizo el diseño en el código real: leo las reglas de clasificación, el `parseBancoSpecific` BBVA (el que corre en la ingesta) y `parseBBVA` de `extraer_spei`, más un spec previo para calcar formato.
+
+Ahora leo el código real para aterrizar el diseño. Busco las reglas de clasificación y el parser BBVA en ambos paths:
+
+Como esperaba: `desfragmentador/` es gitignored y **no está en el working tree local** (vive en el servidor). Sí tengo `extraer_spei.js` (con `parseBBVA`, el path de re-enriquecido). Lo leo para aterrizar la regex del diseño:
+
+`parseBBVA` de `extraer_spei.js` (path de re-enriquecido) **ya tiene** lógica de nombre por `BNET`, CLABE 20-díg y rastreo. La ingesta usa otro código (`parseBancoSpecific` en el server). Antes de escribir el spec, valido una hipótesis clave y barata: **¿el `«REDACTADO»` existente ya recuperaría la contraparte de esas filas con solo re-enriquecer?** (eso define si la capa 2 es "correr un script" o "escribir regex nueva"). Dry-run, sin tocar la BD:
+
+Heredoc se truncó por el escaping. Uso Write directo:
+
+(El `rejectUnauthorized:false` es el patrón preexistente de todos los scripts de este repo contra el Postgres de prod; es un script temporal de sondeo, no lo propago a nada nuevo.)
+
+**Hallazgo de diseño decisivo**: el `parseBBVA` existente recupera **0 de 68** — la capa 2 **no** es "solo re-enriquecer", requiere regex nueva. Razones concretas que veo en los datos:
+
+1. El formato es `PAGO CUENTA DE TERCERO {monto} BNET {cuenta10díg} {texto} Ref. {ref}` — pero `RE_BNET` exige `BNET` **pegado** a los dígitos (`BNET[0-9A-Z]{15,30}`), y aquí es `BNET ` + espacio + cuenta. No matchea.
+2. El concepto viene pegado a la fecha (`0090626PAGO FACTURA`), y el regex de concepto exige espacio.
+3. **Ambigüedad semántica real**: el texto tras `BNET {cuenta}` a veces es un nombre (`PLAGA PICUDO`, `ARBOLEDA ESCONDIDO`) y a veces solo un concepto (`PAGO`, `PAGO FACTURA`). En "cuenta de tercero" BBVA ese campo es texto libre del pagador → puede NO ser el beneficiario registrado. Eso es un juicio de negocio para ti.
+
+Esto confirma que diseñar-primero fue lo correcto. Limpio el temporal y escribo el spec:
+
+Actualizo la memoria del proyecto (`docs/MEMORIA.md`) según CLAUDE.md, agregando la entrada del hallazgo + el spec:
+
+Listo. Diseño escrito, **sin tocar código ni desplegar nada**.
+
+## Qué quedó
+
+**Spec nuevo**: [2026-07-14-bbva-extraccion-contraparte-design.md](docs/superpowers/specs/2026-07-14-bbva-extraccion-contraparte-design.md) — estado *diseño, pendiente de aprobación*.
+
+**Lo que cambió el diagnóstico** (medir antes de arreglar valió la pena):
+- **BANORTE era falsa alarma** — su "41%" eran la comisión de $5 del SPEI (42 filas todas $5.00) + su IVA (282 filas todas $0.80) + compensaciones internas. El formato real de transferencia sale **580/580 = 100%**.
+- Tras refinar el score: **global 90%, 9 de 10 bancos ≥84%**. El **único** banco realmente roto es **BBVA (46%)**.
+
+**El plan de BBVA en 3 capas** (con evidencia real de la BD):
+
+| Capa | Qué | Riesgo | Notas del diseño |
+|---|---|---|---|
+| **1 · clasificación** | `PAGO CUENTA DE TERCERO` → 56/56 caen a clas6 → regla nueva → clas 3 | Bajo | Mismo patrón que el fix clas6 SPEI ya desplegado; golden-test + reclasificar existente |
+| **2 · parseBBVA** | Contraparte embebida (`BNET {cuenta} {nombre} Ref`) que el parser no saca | Medio | **Validé por dry-run: el `parseBBVA` actual recupera 0/68** → necesita regex nueva, no solo re-enriquecer. ⚠️ **Decisión de negocio para ti**: el texto tras `BNET {cuenta}` a veces es nombre (`MAITE MENDEZ GOMEZ`) y a veces concepto (`PAGO FACTURA`) — ¿guardarlo como `beneficiario` o `concepto`? |
+| **3 · desfragmentador** | Pie de página capturado en vez de contraparte (salto de página) | Alto | Fuera de alcance de esta pasada (territorio conocido-difícil de BBVA) |
+
+**Memoria actualizada**: `project_calidad_extraccion.md` (hallazgo BANORTE + tiering BBVA) y `docs/MEMORIA.md` (registro + fecha).
+
+Cuando lo revises, la pregunta que necesito para arrancar capa 2 es esa de arriba (**nombre vs concepto** en cuenta-de-tercero). La capa 1 es la que recomiendo ejecutar primero por ser segura y de alto retorno. Dime si le entramos y a qué capa.
+
+> ⚙️ *Herramientas: Write×4, Read×5, Bash×23, Edit×8, ToolSearch, TodoWrite×3, AskUserQuestion, Glob*
+
+### 👤 Usuario · 17:40
+
+ayudame a subir esta tarea al git y al obsidian como tarea bbva por favor
+
+### 🤖 Claude · 17:40
+
+Voy a subir esto en dos partes: al **git** del repo (spec + MEMORIA + score refinado) y al **Obsidian** como tarea BBVA. Primero reúno el estado real de ambos:
+
+El score `qa_calidad_extraccion.cjs` en disco volvió a un estado previo (sin mi refino de BANORTE) — el entorno lo revierte. Como el commit es un snapshot, re-aplico el refino y lo capturo en el commit. Primero verifico tracking y busco el vault de Obsidian:
+
+Vault confirmado: `C:\obsidian\Memoria-Claude`. Exploro su estructura para saber dónde y cómo va una "tarea":
+
+La convención: las tareas viven en `Conversaciones/` como `YYYY-MM-DD - Tarea N — Título.md`, y hay una carpeta `Proyectos/algoritmo de bancos`. Leo una tarea previa del extractor para calcar formato y reviso esa carpeta:
+
+Formato claro. Ahora ejecuto todo. Primero re-aplico el refino del score (para que el commit lo capture) y de paso reviso el índice para numerar la tarea:
+
+El disco tenía otros cambios. Verifico que el archivo quede coherente antes de commitear:
+
+Falta el gating `conContraparte` en las métricas SPEI (líneas 47-48) — sin él, "I.V.A. ORDEN DE PAGO SPEI" y "COM. SPEI" seguirían contando como `spei_sin_clabe`. Lo completo para dejar el archivo consistente con el refino documentado:
+
+Verifico que el score corre bien (debe dar ~90% global) y leo el índice para numerar la tarea:
+
+Score OK (90.0%). Ahora hago el commit en git con solo los 3 archivos de esta tarea (sin tocar el resto del WIP):
+
+Commit hecho (`39d1a7a`). Ahora la tarea en Obsidian. Reviso el índice y cómo se enlazan las tareas al proyecto:
+
+Ahora creo la tarea en Obsidian siguiendo la convención (`Conversaciones/`, tipo `memoria-conversacion`, enlaces al nodo e índice):
+
+La nota quedó en el vault. La memoria dice que "subir al Obsidian = push al repo `memoria-claude`". Verifico si el vault es git y su estado de sync:
+
+El vault es git (`devtrh/memoria-claude`, main). El flujo establecido es commit+push a main. Subo **solo mi nota** (dejo intacta la modificación ajena de Tarea 2), y como me pediste "subir", hago commit + push:
+
+Push rechazado: el remoto tiene commits nuevos (otra máquina/sync). Hago pull --rebase y push. Antes guardo (stash) la modificación ajena de Tarea 2 para no arrastrarla:
+
+Obsidian: **subido y pusheado** (`memoria-claude` main → `14e397f`). El cambio ajeno de Tarea 2 quedó como estaba (sin tocar). Ahora reviso qué implicaría "subir al git" del repo de gestión (push de la rama):
+
+Perfecto: la rama tiene upstream y **solo mi commit BBVA está sin pushear** (nada ajeno se arrastra). Hago el push:
+
+Listo, la tarea BBVA quedó subida en ambos lados. ✅
+
+## Git — repo `gestión` (`devtrh/gestion`)
+- **Commit `39d1a7a`** en rama `diego/esquema-detalle-empresa`, **pusheado** (`f025f51..39d1a7a`). Solo mi commit; no arrastró nada del WIP.
+- Incluye:
+  - `docs/superpowers/specs/2026-07-14-bbva-extraccion-contraparte-design.md` (spec del fix, 3 capas)
+  - `docs/MEMORIA.md` (entrada del hallazgo + fecha)
+  - `reprocesar db/qa_calidad_extraccion.cjs` (score refinado — verificado corriendo: **90% global**)
+
+## Obsidian — vault `memoria-claude`
+- **Nota nueva**: `Conversaciones/2026-07-14 - Tarea BBVA — Calidad de extraccion medida + diseno del fix.md` (formato `memoria-conversacion`, enlazada a `[[Gestión (Tesorería)]]`, `[[Algoritmo]]`/`[[Bancos]]`, `[[00 Índice de Memoria]]`).
+- **Commit + push a `main`** (`14e397f`). Hubo que hacer `pull --rebase` porque el remoto tenía cambios de otra máquina; la modificación ajena de la nota de Tarea 2 la dejé intacta (stash/pop, sin commitear).
+
+## Notas
+- Los archivos del extractor (`formato_fecha.js`, `clasificacion.js`, `desfragmentador/`) **siguen gitignored** y viven en el server — no se suben; el fix, cuando se implemente, se despliega por scp reconciliado. El spec lo deja documentado.
+- La tarea quedó como **`estado: en curso`** en Obsidian, con el pendiente que te bloquea la capa 2: **¿el texto tras `BNET {cuenta}` en cuenta-de-tercero BBVA va como `beneficiario` o `concepto`?**
+
+Cuando quieras le entramos a la **capa 1** (la segura, ~56 filas clas6 recuperadas).
+
+> ⚙️ *Herramientas: Bash×15, Edit×2, Read, Write, TodoWrite*
+
+### 👤 Usuario · 17:58
+
+ok ayudame a sincronizarme con el git, para tener la informacion actual, mi compalera hizo algunos comitts
+
+### 🤖 Claude · 17:58
+
+Tu compañera hizo commits — te ayudo a sincronizar sin perder tu trabajo sin commitear (que es bastante). Primero reúno el estado real: rama, WIP local, script de sincronizar del repo, y qué hay nuevo en el remoto (fetch, que no modifica nada):
+
+Hay novedades: tu compañera trabajó en `alo/cambios` y `feat/buscar-alias`, y **`main` avanzó** (`814f411..e2ad617`). Además, tu rama `diego/esquema-detalle-empresa` en el remoto tiene **un commit nuevo encima del mío** (`39d1a7a..3b1b3a4`). Antes de tocar nada, veo tu WIP local, qué trae cada commit nuevo, y qué hace el script `sincronizar.ps1`:
+
+Cuadro claro: tu rama **ya fue mergeada a `main`** (PR #23) junto con el trabajo de tu compañera (PR #22 `alo/cambios`: memoria, dedup BANREGIO, CLABEs≠18, y nómina multi-cuenta). Tu commit BBVA (`39d1a7a`) ya está en `main` (`e2ad617`). Tu WIP local (10 items) es casi todo **archivos sin trackear** (backups, specs, scripts) → un pull no los toca.
+
+Leo tu script de sincronizar para seguir el flujo del equipo en vez de improvisar:
+
+El script hace `git pull --rebase --autostash origin main` sobre tu rama. Como tu commit ya está en `main`, tu rama convergería con `main` (obtienes todo lo actual). **Pero** el `--autostash` solo guarda archivos trackeados; tienes **archivos sin trackear que podrían chocar** con lo que tu compañera metió a main (ej. `backend/lib/concentrado/`, specs de comisionistas). Si chocan, git aborta (a salvo) pero el script falla. Verifico colisiones antes de correr nada:
+
+**Cero colisiones** — ninguno de tus 19 archivos sin trackear existe en `main`, así que la integración no se bloquea y tu WIP queda intacto. Corro tu script oficial `sincronizar.ps1` (hace `pull --rebase --autostash origin main`):
+
+La sincronización funcionó: **fast-forward de 88 commits de `main`** a tu rama, tu WIP quedó encima (autostash lo reaplicó), sin conflictos. Verifico el estado final y que tu WIP siga intacto:
+
+**Sincronización completa y limpia**: tu rama = `origin/main` (`ef97ef2`), estás **100% al día**, y tu WIP sin commitear quedó intacto. Verifico rápido que el score que quedó tras el merge de tu rama con la de tu compañera siga corriendo (ambas tocaron ese archivo):
+
+Confirmado: la sincronización trajo un **archivo roto desde `main`** — `qa_calidad_extraccion.cjs` truena con `ReferenceError: conContraparte is not defined`. Es un **conflicto mal resuelto**: tu versión (con el refino BANORTE) y la de tu compañera (`918e029 score fiel`) tocaron el mismo archivo, y al fusionar se perdieron las líneas que definen `desc` y `conContraparte`, y quedó `banco_sin_parser` muerto en `SIG`. Esto no es intencional; lo arreglo (restaurar las 2 definiciones + limpiar el residuo). Leo el estado real y corrijo:
+
+**Arreglado** — el score vuelve a correr (90.0%). Confirmo un detalle importante para lo de BBVA: el merge también trajo el **desfragmentador ahora versionado en git** (antes gitignored). Verifico:
+
+Todo confirmado. Aquí está el resumen de la sincronización:
+
+## ✅ Sincronizado — estás 100% al día
+- Tu rama `diego/esquema-detalle-empresa` = `origin/main` (`ef97ef2`), **88 commits de main integrados** (fast-forward, sin conflictos).
+- Tu **WIP sin commitear quedó intacto** (archivos sin trackear + submódulo `cep-python`).
+- Tu commit BBVA (`39d1a7a`) también está ya en `main`.
+
+## Lo que trajo tu compañera / main
+- **Módulo Concentrado (comisionistas)**: parsers de 7 pestañas + UI (dashboard/anual/matriz) + API + tests.
+- **Nómina multi-cuenta**: tabla `colaboradores_cuentas` (1:N con historial CLABE), UI de cuentas, auto-match multi-cuenta, validación dígito Banxico (SQL `14`).
+- **Búsqueda**: columnas ordenables + exportar + Proveedores en cascada + alias.
+- **Saneo datos**: fix CLABE 085, dedup renta BANREGIO, saneo clabe='0' (SQL `15`/`16`); memoria (`DB_NAME=tesoreria` confirmado).
+- 🎯 **El desfragmentador ya está VERSIONADO en git** (`backend/lib/desfragmentador/...` — antes gitignored). Esto es clave para BBVA: las capas 1 y 2 del spec ahora se pueden editar **en el repo con PR normal**, ya no solo por scp al server.
+
+## ⚠️ Encontré (y arreglé) un archivo roto que trajo el merge
+El merge de tu rama con la de tu compañera dejó **`reprocesar db/qa_calidad_extraccion.cjs` roto** — truena con `ReferenceError: conContraparte is not defined`. Ambas versiones tocaron ese archivo y la fusión perdió las líneas que definen `desc`/`conContraparte` y dejó `banco_sin_parser` muerto. **Lo reparé** (restauré las 2 definiciones + limpié el residuo); ya corre de nuevo (**90.0%**). Está **sin commitear** en tu working tree.
+
+**¿Cómo quieres aterrizar ese fix?** El script es solo de desarrollo (no se despliega), pero el roto quedó en `main` y también le afecta a tu compañera. Mi recomendación: una **rama chica `fix/qa-score-merge` → PR a main** para que el arreglo le llegue a los dos, aislado de tu WIP del esquema. ¿Lo hago así, o prefieres que se vaya con tu `cerrar-y-deploy` normal más tarde?
+
+> ⚙️ *Herramientas: Bash×7, Read×3, PowerShell, Edit×2*
