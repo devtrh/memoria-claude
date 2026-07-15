@@ -6,7 +6,7 @@ tags: [proyecto, gestion, tesoreria, finanzas]
 proyecto_codigo: gestion
 bd: tesoreria
 estado: activo
-actualizado: 2026-07-14
+actualizado: 2026-07-15
 ---
 
 # 💰 Gestión (Tesorería)
@@ -87,7 +87,7 @@ tipo: proyecto
 nombre: Gestión (Tesorería)
 tags: [proyecto, gestion]
 estado: activo
-actualizado: 2026-07-14
+actualizado: 2026-07-15
 ---
 # 💰 Gestión (Tesorería)
 Nodo principal del área Gestión (Tesorería): app web de tesorería (bancos, haberes, adeudos, gastos, inversiones, nómina, cuentas, efectivos, operaciones) con OCR de CEP y chat interno.
@@ -141,6 +141,8 @@ Nodo principal del área Gestión (Tesorería): app web de tesorería (bancos, h
 
 ## Registro de cambios
 > Append-only, lo más reciente arriba: <fecha> — qué cambió · por qué · archivos.
+
+- 2026-07-14 — **Capa 3: reproceso de datos VIEJOS BBVA (backfill de `descripcion`)** (rama `alo/cambios`). Nuevo `reprocesar db/reprocesar_bbva.cjs`: re-corre `procesarPDF()` (desfragmentador con fix Capa 3) sobre un estado BBVA y **corrige solo `descripcion`** de las filas que la ingesta vieja truncó por salto de página. Conservador: match por llave **`saldo|retiro|deposito`** (exacto) contra las filas del mismo estado (`empresa_corto`+`banco`+rango fechas); solo actualiza cuando la nueva **tira el footer** (`BBVA MEXICO S.A.`…) o **recupera cola larga** (>10 chars) que **no sea domicilio fiscal/CP** (guard anti ruido↔ruido); nunca acorta, nunca toca beneficiario/clase. Backup id+desc vieja a JSON antes de escribir; DRY-RUN por defecto, `--apply` = batch `unnest`. Fuerza `bancoOverride:'BBVA'` (sin hint, `procesarPDF` **mis-detecta BBVA→BANREGIO** y globa los movimientos — bug latente de ingesta con nombres "neutros"). Los PDFs se bajan del app por URL (`/gestion/api/bancos/pdf/2025/<MM MES>/<carpeta>/<EMPRESA BANCO MES AÑO>.pdf`, curl sin auth). **BANDEZ BBVA 2025**: enero ✓ y febrero ✓ **aplicados** (verificado en DB); marzo(2)/abril(3)/junio(4)/julio(4) con dry-run OK y comandos `--apply` entregados; mayo falta URL. **Sin-match esperado y seguro**: si el solver de signos resuelve un bloque sin-saldo en otro orden que la ingesta original, la cola del mes diverge en saldo y esas filas se **omiten** (ej. marzo: 10 filas del 31/mar). El write a prod lo corre el usuario (el clasificador bloquea escrituras del agente). · reprocesar db/reprocesar_bbva.cjs.
 
 - 2026-07-14 — **Capa 3: fix del salto de página BBVA en el desfragmentador** (rama `alo/algoritmo-fix`; `desfragmentador.js` es **gitignored/server-only**). Un movimiento BBVA partido entre dos hojas (header con monto+saldos al final de una hoja, la CONTINUACIÓN con CLABE/rastreo/NOMBRE al inicio de la siguiente tras el pie de página) perdía el nombre: `regexFrenoPagina` (línea ~2669) cerraba el movimiento en el footer y la continuación quedaba huérfana (agravado por el split del bloque en `FECHA SALDO`). Fix en el loop de reconstrucción del extractor BBVA (`desfragmentador.js` ~2658): `actual`/`saltando` persisten entre sub-bloques; al detectar el footer (`BBVA MEXICO, S.A.` / `Av. Paseo de la Reforma` / …) se entra en modo **saltando** (ignora el ruido de página hasta el header `OPER LIQ`) **sin cerrar el movimiento**, así la continuación (nombre) se pega. Repro/golden con PDFs reales traídos del server (scratchpad): `BANDEZ BBVA ENERO 2025` → el `R01 PAGO DE NOMINA 375,000 (saldo 22,550.66)` ahora recupera `BANDEZ SERVICIOS DE CALIDAD SA DE CV Ref. IN 4207413300`. Validado en 5 PDFs BBVA (UNIENDO/PLACTON/ARBOLEDA/ANZAND/GONREY): **0 footer pegado, 0 movimientos fusionados, 0 crashes**, conteos estables. **PENDIENTE**: (1) deploy de `desfragmentador.js` al server (para ingesta futura); (2) **reprocesar** los estados BBVA para arreglar los datos VIEJOS en la DB (operación grande — matchear y actualizar, con backup). Los PDFs viven solo en el server (`/pdfs`); el reproceso corre `procesarPDF()` del runner. · backend/lib/desfragmentador/nodes/desfragmentador.js (gitignored).
 
