@@ -40,6 +40,7 @@ Memoria extendida de las conversaciones que he tenido con Claude (Cowork). Cada 
 
 | Fecha | Conversación | Proyecto | Temas | Estado |
 |-------|--------------|----------|-------|--------|
+| 2026-07-20 | [[2026-07-20 - Gastos — diagnóstico con dry runs y rediseño a Estado de caja]] | [[Gestión (Tesorería)]] | Gastos, caja/efectivo, 3 dry runs read-only, conciliación bancaria descartada, tipo_movimiento≠fijo/variable, traspaso interno en totales, diseño "Estado de caja" | en-curso |
 | 2026-07-09 | [[2026-07-09 - Tarea 4 - Saneo extractor bancario y fix nomina]] | [[Gestión (Tesorería)]] | extractor, CLABE 085, BANREGIO dedup, ordenante=beneficiario, pagos servicio→ras/convenio, edición CLABE superusuario, fix nómina, deploy | cerrada |
 | 2026-07-10 | [[2026-07-10 - Tarea 3 — Esquema con detalle de empresa (frontales homologado)]] | [[Gestión (Tesorería)]] | esquema/dispersión, frontales, homologación, grupos | en-curso |
 | 2026-07-10 | [[2026-07-10 - Tarea 2 — Movimientos exportables, beneficiario-ordenante y alias en grupos]] | [[Gestión (Tesorería)]] | movimientos CSV, filtros Día/Mes, beneficiario/ordenante, alias grupos, deploy reconciliado | en-curso |

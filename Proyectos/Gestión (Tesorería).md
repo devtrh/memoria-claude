@@ -38,6 +38,7 @@ Nodo principal del área Gestión (Tesorería): sistema del proyecto `gestion` q
 - [[2026-06-24 - Corrección de 12 movimientos con signo invertido]]
 - [[2026-06-25 - Homologar cambios del equipo y subir a git]]
 - [[2026-07-06 - Ingesta de estados de cuenta junio 2026]]
+- [[2026-07-20 - Gastos — diagnóstico con dry runs y rediseño a Estado de caja]]
 
 **Documentos fuente:**
 - Documento fuente: `docs/Clientes/Conciliacion clientes OPS 2026.md` (conciliación catálogo OPS 2026).
