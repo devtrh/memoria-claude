@@ -1,7 +1,7 @@
 ---
 tipo: transcript-conversacion
 fecha: 2026-07-08
-fecha_fin: 2026-07-10
+fecha_fin: 2026-07-14
 titulo: "cuando estamos viendo los movimientos de un cliente que podamos…"
 proyecto: "Gestión (Tesorería)"
 session_id: a315f442-4df1-49ca-885a-879dee4569c1
@@ -12,9 +12,9 @@ tags: [memoria, transcript, conversacion]
 
 > [!info] Metadatos de la sesion
 > - **Sesion:** `a315f442-4df1-49ca-885a-879dee4569c1`
-> - **Rango:** 2026-07-08 → 2026-07-10
+> - **Rango:** 2026-07-08 → 2026-07-14
 > - **Rama(s) git:** `main`, `diego/sync-ops-catalogo`, `diego/jubilar-clientes-homologado`, `fix/clabe-085-banregio-extractor`, `fix/nomina-colaboradores-groupby`, `diego/esquema-detalle-empresa`, `HEAD`
-> - **Turnos:** 10 de usuario · 10 de Claude
+> - **Turnos:** 11 de usuario · 11 de Claude
 > - **Proyecto:** Gestión (Tesorería)
 > - **Claude Code:** v2.1.205
 > - _Transcript legible (solo texto usuario/Claude, sin herramientas). Secretos evidentes enmascarados como «REDACTADO». Fuente: `.claude/projects/.../a315f442-4df1-49ca-885a-879dee4569c1.jsonl`._
@@ -655,3 +655,108 @@ El archivo quedó **guardado localmente** en la bóveda (que es un repo git). No
 ¿Retomamos la **implementación de la Fase 2** (que ya habías aprobado), o lo dejamos aquí por ahora?
 
 > ⚙️ *Herramientas: Bash×5, Read×3, Write, Edit*
+
+### 👤 Usuario · 16:06
+
+si vamos con la implementacion de la fase 2 por favor
+
+### 🤖 Claude · 16:06
+
+Vamos con la Fase 2. Ya tengo el diseño aprobado. Pero pasaron varios días desde la Fase 1 (y hubo más trabajo en el proyecto), así que primero verifico el estado actual de mi árbol local — ¿siguen mis cambios de Fase 1 sin commitear, o cambió algo?
+
+Mis cambios de Fase 1 siguen intactos en el árbol local (sin commitear, rama `diego/esquema-detalle-empresa`). Construyo la Fase 2 encima. Creo la lista de tareas y exploro el flujo de datos de GruposTab (dónde se cargan los grupos y cómo se renderizan las "sugeridas" existentes, para reflejar el patrón).
+
+Estructura clara: `GruposTab` carga con `fetchCuentasGrupos`, cada grupo es un `GrupoCard` con sección "Sugeridas" + `onAceptarSugerida`. Voy a reflejar ese patrón. Leo la sección Sugeridas, el fetch/estado del padre y el wiring de `onAceptarSugerida`.
+
+Veo el patrón completo. Necesito entender la estructura de las secciones (dónde vive `gruposFiltrados.map` y de dónde salen `tipo`/`grupos`) para enhebrar las sugerencias. Leo 1900-1976:
+
+GruposTab es un solo componente con tabs (`seccion`); renderiza una sección a la vez con `gruposFiltrados.map`. Solo necesito enhebrar las sugerencias en ese map. Tengo todo. Escribo el spec de Fase 2 y luego implemento.
+
+Spec listo. Ahora el backend: el endpoint `GET /cuentas/grupos/sugerencias-nombre`. Busco dónde insertarlo (tras el DELETE /grupos/asignar):
+
+Reutilizaré el patrón de `provNombres/frontalNombres/customNombres`. Leo ese bloque y el punto de inserción (fin del DELETE /grupos/asignar):
+
+Tengo todo. Inserto el endpoint backend (carga de nombres de grupo reutilizando el patrón existente, pre-filtro SQL + confirmación en JS):
+
+Verifico sintaxis del backend:
+
+Backend OK. Ahora el frontend. Agrego el fetch en api.ts:
+
+Ahora GruposTab. Import + estado + carga:
+
+Ahora el estado `sugNombre` + carga no bloqueante. Busco las declaraciones de estado del componente:
+
+Ahora la carga no bloqueante en `reload` + el mapa por grupo:
+
+Ahora paso las props a `GrupoCard` en el render. Localizo el call actualizado:
+
+Ahora `GrupoCard`: agrego las props al tipo + destructuring. Leo la firma:
+
+Ahora agrego las props al destructuring de GrupoCard:
+
+Ahora la sección "Coinciden por nombre" en el render de GrupoCard, entre "Sugeridas" y "Asignadas". Localizo el ancla:
+
+Para descubribilidad, agrego un badge en el header del grupo con el conteo de coincidencias por nombre (junto al de "sugeridas"). Localizo los badges del header:
+
+Ahora verifico typecheck (GruposTab + api.ts):
+
+Sin errores nuevos. Ahora el deploy (backend cuentas.js + frontend api.ts/GruposTab.tsx). Como el server diverge (Concentrado, y pudo haber más cambios desde el 10-jul), primero comparo **server actual vs mi local** en los 3 archivos para ver qué hay que reconciliar:
+
+Diagnóstico:
+- **cuentas.js** y **GruposTab.tsx**: el server **no tiene contenido ajeno** (las líneas `<` son solo mis propias anclas de edición) → puedo subir mi local directo.
+- **api.ts**: el server tiene **contenido ajeno** (funciones `CuentaColaborador`/nómina de la Tarea 4 + Concentrado) que mi local no tiene → **hay que reconciliar**.
+
+Confirmo cuentas.js/GruposTab (que no haya nada ajeno más) y preparo la reconciliación de api.ts:
+
+Confirmado: cuentas.js (0 ajeno) y GruposTab.tsx (solo mis anclas) → subir local directo. api.ts → reconciliar. Preparo la copia LF del server y aplico mi delta de Fase 2:
+
+Verifico que el api.ts reconciliado conserve lo del server (Concentrado + CuentaColaborador) **y** mi Fase 2, y que vs mi local la única diferencia sea lo del server:
+
+api.ts reconciliado correcto (Concentrado + CuentaColaborador del server + mi Fase 2). Ahora backup + subir los 3 (cuentas.js y GruposTab locales, api.ts reconciliado):
+
+Los 3 subieron idénticos. Reconstruyo backend + frontend:
+
+Backend Healthy y ambos recreados. Verifico: estado/bundle/health + el **nuevo endpoint** `sugerencias-nombre` (200 + estructura) + que Concentrado/nómina sigan vivos (api.ts reconciliado) + logs.
+
+**Fase 2 desplegada y verificada:**
+- Nuevo endpoint `GET /cuentas/grupos/sugerencias-nombre` → **HTTP 200 en 0.057s**, estructura `{"sugerencias":[]}` (vacío por ahora: aún no hay alias registrados que califiquen, o sin coincidencias — la respuesta rápida confirma el short-circuit cuando no hay alias).
+- **Concentrado sigue vivo** (`/api/concentrado/meses` → 200) → la reconciliación de api.ts preservó lo del server.
+- Backend Healthy, bundle nuevo `index-DxtnTZj2.js`, `/gestion/` + `/api/health` 200, sin errores en logs.
+
+Actualizo el registro de cambios.
+
+Actualizo la nota de Obsidian (Tarea 2) para reflejar que la Fase 2 ya está implementada y desplegada:
+
+Actualizo el pendiente en la nota (Fase 2 ya no está pendiente) y cierro tareas:
+
+**Fase 2 implementada y desplegada** en producción. 🎉
+
+## Qué hace
+En **Cuentas → Grupos**, cuando una CLABE **no registrada** tiene un beneficiario/ordenante que coincide con un **alias** que registraste en un elemento del grupo (Fase 1), aparece:
+- Un **badge índigo "N por nombre"** en el encabezado del grupo.
+- Una sección **"Coinciden por nombre (N)"** dentro del grupo, con cada CLABE (banco, contraparte, el alias que coincidió, nº movs/montos) y un botón **Asignar**.
+- **Asignar** registra esa CLABE en el grupo (prellenando razón social/alias del elemento que coincidió) reusando el flujo existente; tras eso ya cuenta en todos lados. Reversible con el "quitar".
+
+Nada es automático ni cambia totales hasta que confirmas.
+
+## Detalles técnicos
+- **Backend:** endpoint aislado `GET /cuentas/grupos/sugerencias-nombre` (bajo demanda, no toca el `/grupos` pesado). Pre-filtro SQL `ILIKE ANY(alias)` sobre movimientos, excluyendo las ya registradas, + confirmación en JS (normalizado "contiene", alias ≥ 4 chars). Short-circuit si no hay alias → respondió en **0.057s**.
+- **Frontend:** carga **no bloqueante** (los grupos se pintan primero; las sugerencias llegan después).
+
+## Deploy (reconciliado)
+La divergencia server↔git **creció**: además de Concentrado, la **Tarea 4** metió funciones de nómina (`CuentaColaborador`) en el `api.ts` del server que tampoco están en git. Reconcilié api.ts (apliqué mi delta sobre la copia del server); cuentas.js y GruposTab no tenían contenido ajeno → subidos directos.
+
+**Verificado:** endpoint → 200 · `/concentrado/meses` sigue 200 (Concentrado intacto) · backend Healthy · bundle `index-DxtnTZj2.js` · sin errores. Backup en `/home/devn8n/teso_deploy_backups/20260714_102159`.
+
+> **Ctrl+F5** para el bundle nuevo.
+
+## Aceptación (para ti, en la UI)
+El endpoint respondió `{sugerencias:[]}` — vacío, porque aún no hay alias registrados que califiquen. Para verlo funcionando: en un elemento de grupo agrega un **alias** (Fase 1) que aparezca como beneficiario/ordenante de alguna CLABE sin registrar → debería aparecer la sugerencia "por nombre" en ese grupo, y **Asignar** la registra.
+
+## Pendientes (los mismos de fondo)
+1. **Sincronizar servidor↔git** — cada deploy exige reconciliación manual porque el server corre código sin commitear (Concentrado + nómina Tarea 4). Vale la pena ordenarlo.
+2. Versionar en git todo lo de estos días.
+
+Actualicé `docs/MEMORIA.md`, el spec (`2026-07-14-...`) y la nota de Obsidian (Tarea 2, marcando Fase 2 como hecha). ¿Quieres que ataquemos el pendiente de **alinear servidor↔git** (que es el que hace cada deploy riesgoso), o lo dejamos aquí?
+
+> ⚙️ *Herramientas: Bash×10, TodoWrite×4, Grep×5, Read×16, Write, Edit×14*

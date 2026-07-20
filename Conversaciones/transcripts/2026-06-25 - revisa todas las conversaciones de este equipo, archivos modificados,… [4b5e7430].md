@@ -1,7 +1,7 @@
 ---
 tipo: transcript-conversacion
 fecha: 2026-06-25
-fecha_fin: 2026-07-10
+fecha_fin: 2026-07-14
 titulo: "revisa todas las conversaciones de este equipo, archivos modificados,…"
 proyecto: "Gestión (Tesorería)"
 session_id: 4b5e7430-7c35-4a75-b3e6-afac311e8923
@@ -12,9 +12,9 @@ tags: [memoria, transcript, conversacion]
 
 > [!info] Metadatos de la sesion
 > - **Sesion:** `4b5e7430-7c35-4a75-b3e6-afac311e8923`
-> - **Rango:** 2026-06-25 → 2026-07-10
+> - **Rango:** 2026-06-25 → 2026-07-14
 > - **Rama(s) git:** `diego/tarik-flujo`, `main`, `diego/hotfix-chatview-merge`, `feat/concentrado-comisionistas`, `diego/sync-ops-catalogo`, `diego/jubilar-clientes-homologado`, `fix/clabe-085-banregio-extractor`, `diego/esquema-detalle-empresa`
-> - **Turnos:** 35 de usuario · 36 de Claude
+> - **Turnos:** 37 de usuario · 38 de Claude
 > - **Proyecto:** Gestión (Tesorería)
 > - **Claude Code:** v2.1.205
 > - _Transcript legible (solo texto usuario/Claude, sin herramientas). Secretos evidentes enmascarados como «REDACTADO». Fuente: `.claude/projects/.../4b5e7430-7c35-4a75-b3e6-afac311e8923.jsonl`._
@@ -3021,3 +3021,114 @@ Un par de cosas:
 - Recuerda que seguimos con **2 decisiones pendientes** en F1 (conflictos **ATENAS** CATANIA-vs-TARIK y **JASARQ** FER AVILA-vs-TARIK) antes de aplicar el catálogo. Cuando quieras las resolvemos y corro el apply.
 
 > ⚙️ *Herramientas: Bash×2, Read×2, Write, Edit*
+
+### 👤 Usuario · 16:02
+
+DISTRIBUIDORA DE MEDICAMENTOS Y CONSUMIBLES ATENAS SA DE CV	 es de catania, ya lo borre del catalogo de tarik 
+
+ayudame a borrar al cliente de ROFESIONALES INTEGRALES RASTROK SA DE C	—	
+ROFESIONALES INTEGRALES RASTROK SA DE C
+PIR2404264Y2	—	—	$0.00	0	Inactivo
+
+Nivel 1
+JASARQ CONSTRUCCIONES SA DE CV
+Sin movimientos
+659429100000001818
+
+ASP INTEGRA OPC	—	—
+
+ya acomodamos lo de atenas y jasarq realmente
+
+### 🤖 Claude · 16:03
+
+Perfecto — entonces **ATENAS → CATANIA** (ya lo quitaste de tarik) y **JASARQ → FER AVILA** (lo veo renombrado bajo FER AVILA). Los 2 conflictos de F1 quedan resueltos en la DB; al correr el apply saldrán 0 conflictos. 
+
+Ahora, para borrar el cliente **PROFESIONALES INTEGRALES RASTROK SA DE CV** (RFC `PIR2404264Y2`): es un **DELETE en producción**, así que primero **investigo qué referencia** ese cliente (read-only) antes de tocar nada.
+
+Ubicado: `catalogo_clientes` id **374** (activo=false) ↔ `ops_clientes` id **479** (status=activo, el conocido desync). Antes de borrar, reviso **todas las tablas que referencian** a esos ids (FKs) para no dejar huérfanos ni que falle el delete.
+
+FKs claras. Los que **bloquean** el delete si tienen filas (NO ACTION): subclientes, `ops_solicitudes`, `ops_saldo_movimientos`, `ops_nom_solicitudes`. Los de cuentas/nombres son CASCADE. Cuento dependientes de 374/479 (y colaboradores por si acaso).
+
+Verificado: **0 dependientes** en todo (0 subclientes, 0 solicitudes, 0 saldos, 0 nómina, 0 cuentas, 0 nombres, 0 colaboradores). Inactivo, $0, 0 movimientos. Es 100% seguro borrar. Hago **snapshot restaurable** de las 2 filas y luego el delete transaccional.
+
+Snapshot restaurable guardado (ambas filas completas). Ejecuto el delete transaccional (ops 479 → catalogo 374) con verificación.
+
+Hecho. **Cliente PROFESIONALES INTEGRALES RASTROK SA DE CV (RFC PIR2404264Y2) borrado.**
+
+- `ops_clientes` id 479 → borrado (1 fila)
+- `catalogo_clientes` id 374 → borrado (1 fila)
+- Verificado dentro de la transacción: **0 quedan** en ambas tablas. COMMIT ok.
+- **Snapshot restaurable** (ambas filas completas) en `backend/backups/cliente_RASTROK_374_pre_delete_2026-07-14.csv` por si acaso.
+- Era seguro: inactivo, $0, 0 movimientos y **0 dependientes** (0 subclientes, 0 solicitudes/saldos/nómina, 0 cuentas/nombres, 0 colaboradores).
+
+Sobre **F1 (frontales)**: con lo que acomodaste, los 2 conflictos quedan resueltos —
+- **ATENAS → CATANIA** (lo quitaste de tarik) ✓
+- **JASARQ → FER AVILA** (renombrado/agrupado ahí) ✓
+
+Así que el catálogo homologado ya no tiene conflictos. Cuando quieras cierro F1: re-corro el generador (debe salir **0 por validar**) y ejecuto el **apply (Task 4)** con snapshot antes/después para poblar `frontales` + `frontales_nombres`. ¿Le sigo con eso ahora, o lo dejamos para después?
+
+> ⚙️ *Herramientas: Bash×5*
+
+### 👤 Usuario · 16:13
+
+con que mas podemos continuar
+
+### 🤖 Claude · 16:14
+
+Con gusto. Aquí está lo que tenemos abierto, ordenado por qué tan listo está para avanzar:
+
+**Del sub-proyecto Esquema (en curso):**
+- **F1 — Frontales homologado**: al 95%. Solo falta re-correr el generador (ya sin conflictos) + **aplicar (Task 4)** a `frontales`/`frontales_nombres` con snapshot, verificar y cerrar la rama. Es lo más cercano a terminar.
+- **F2** — catálogo de esquemas + normalizar `metodos_dispersion` (Soc.Civil→SC, quitar Procom).
+- **F3** — semilla de colaboradores (`empresa_asimilados`/`tarjeta_proveedor` + cliente→frontal).
+- **F4/F5** — captura por pago en nómina + UI de Nóminas (esquema+empresa+CLABE).
+
+**Pendientes aparte (de la memoria):**
+- Asignar método/esquema a los **~5,006 colaboradores sin método**.
+- Escalar ingesta de colaboradores faltantes (EVSA, TROPPER… ~7,800).
+- Reatribuir cuentas de trabajador **ETANOL (13)** / **SIERRA (4)**; conseguir la CLABE real de VIALLI.
+- **Seguridad**: rotar la contraseña de BD prod hardcodeada (pendiente real).
+
+Vamos con **F2 — catálogo de esquemas + normalizar `metodos_dispersion`**. Ya está diseñado en el spec (§3.1), pero antes de escribir el plan reviso el estado real de git (para aislar la rama como en F1) y de la DB (distribución actual + si algo ya existe).
+
+Estado claro: `esquemas_catalogo` **no existe** aún (F2 lo crea); metodos_dispersion igual que antes (Soc. Civil 161, Procom 12, IAS MTY 1); 5007 sin método (eso es F3, no F2). La rama de alias (`diego/esquema-detalle-empresa`) sigue en f025f51 sin avanzar, pero igual aíslo F2 en su worktree como F1.
+
+**Diseño F2 (del spec §3.1), aterrizado:**
+- Tabla **`esquemas_catalogo`**: `codigo (PK)`, `display`, `requiere_empresa`, `tipo_empresa` (o nota), `activo`, `orden`. Seed con los ~13 esquemas canónicos.
+- **Normalización** de `colaboradores.metodos_dispersion`:
+  - **Soc. Civil → SC** (161 filas) — rename claro. ✓
+  - **IAS MTY → IAS** (1) — MTY es el proveedor/empresa (se captura aparte, como SA→frontal), así que el esquema es IAS. Default.
+  - **Procom** (12) — "ya no existe": es la única decisión con impacto en datos.
+
+Todo con snapshot antes/después.
+
+Entendido: **conservar Procom** (queda en el catálogo, marcado deprecado/no-usar por si acaso; no toco los 12). Entonces la normalización se reduce a **Soc. Civil→SC** (161) y **IAS MTY→IAS** (1).
+
+Aíslo F2 en su propio worktree (rama nueva desde el commit del spec) y escribo el plan.
+
+F2 aislado en `gestion-f2-esquemas` [diego/f2-esquemas-catalogo]. Escribo el plan (corto, 2 tasks) y los archivos SQL.
+
+Creo los dos archivos SQL en el worktree.
+
+Commiteo los archivos F2 y aplico la Task 1 (crear tabla + seed) a prod.
+
+Task 1 aplicado (14 filas). Verifico el catálogo y hago el snapshot de los colaboradores afectados antes de normalizar.
+
+Catálogo OK (14/13 activas, Procom inactivo). Snapshot de 162 colaboradores afectados guardado. Aplico la normalización (Task 2) + chequeo de integridad final.
+
+✅ **F2 completo.**
+
+- **`esquemas_catalogo` creada** en prod: 14 esquemas (13 activos + Procom deprecado/conservado).
+- **Normalización aplicada**: `UPDATE 162` filas → **Soc. Civil→SC** (161) y **IAS MTY→IAS** (1, ya tenía IAS → dedup limpio). `quedan_soccivil=0`, `quedan_iasmty=0`.
+- **Integridad ✓**: **0 valores huérfanos** — todo valor en `metodos_dispersion` existe ahora en el catálogo. SC=161, IAS=809.
+- Snapshot restaurable en `backend/backups/metodos_dispersion_pre_norm_2026-07-14.csv` (162 filas).
+- Todo en la rama aislada `diego/f2-esquemas-catalogo` (worktree `gestion-f2-esquemas`); plan + SQL commiteados.
+
+**¿Seguimos?** Lo más natural ahora:
+
+1. **Cerrar F1** (frontales) — ya sin conflictos: re-corro el generador (0 por validar) + apply con snapshot + verifico. Deja el catálogo de frontales aplicado en prod. Es rápido y lo dejamos redondo.
+2. **F3 — semilla de colaboradores** — agregar `empresa_asimilados`/`tarjeta_proveedor` + mapeo cliente→frontal, poblando desde Nayeli/layouts/grupos (ahora que ya tenemos frontales homologadas y el catálogo de esquemas).
+
+Yo cerraría **F1** primero (está a un paso y deja algo entregado), luego F3. ¿Le sigo con F1, con F3, o prefieres otra cosa (p.ej. la UI, o alguno de los pendientes sueltos)?
+
+> ⚙️ *Herramientas: AskUserQuestion×2, Bash×5, Write×3, TodoWrite*
