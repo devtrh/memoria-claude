@@ -4,343 +4,44 @@
     "sessionId": "3ff20b18-e19c-473d-b55c-6aca4a97c202",
     "shortId": "3ff20b18",
     "fecha": "2026-07-13",
-    "fecha_fin": "2026-07-14",
+    "fecha_fin": "2026-07-21",
     "titulo": "agarra contexto de c:/obsidian/memoria-claude luego de todas las…",
     "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 2,
-    "turnos_claude": 2,
+    "turnos_usuario": 24,
+    "turnos_claude": 24,
     "ramas": [
-      "diego/esquema-detalle-empresa"
+      "diego/esquema-detalle-empresa",
+      "fix/qa-score-merge",
+      "diego/f2-esquemas-catalogo-merge",
+      "main",
+      "feat/sp2-nomina-correo",
+      "fix/quita-seed-esquemas-uppercase",
+      "diego/f3-metodos-pst",
+      "diego/f5-plano-main"
     ],
     "primer_prompt": "agarra contexto de c:/obsidian/memoria-claude luego de todas las conversaciones quiero que las subas a conversaciones al proyecto de gestion tesoreria ya hay una carpeta para eso que contecga todo por di un usuario requiere el contexto de la conversaciones que hubo en este equipo sobre gestion y deja un documento en el que dejes pasos para los demas proyectos para subir esas conversaciones"
-  },
-  {
-    "file": "2026-07-08 - cuando estamos viendo los movimientos de un cliente que podamos… [a315f442].md",
-    "sessionId": "a315f442-4df1-49ca-885a-879dee4569c1",
-    "shortId": "a315f442",
-    "fecha": "2026-07-08",
-    "fecha_fin": "2026-07-14",
-    "titulo": "cuando estamos viendo los movimientos de un cliente que podamos…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 11,
-    "turnos_claude": 11,
-    "ramas": [
-      "main",
-      "diego/sync-ops-catalogo",
-      "diego/jubilar-clientes-homologado",
-      "fix/clabe-085-banregio-extractor",
-      "fix/nomina-colaboradores-groupby",
-      "diego/esquema-detalle-empresa",
-      "HEAD"
-    ],
-    "primer_prompt": "cuando estamos viendo los movimientos de un cliente que podamos exportar los movimientos por favor"
-  },
-  {
-    "file": "2026-07-07 - de cualquier pregunta que te haga el contexto lo obtendras de… [4726236e].md",
-    "sessionId": "4726236e-fcd3-4ac6-9ae2-fbb97c8b5e03",
-    "shortId": "4726236e",
-    "fecha": "2026-07-07",
-    "fecha_fin": "2026-07-13",
-    "titulo": "de cualquier pregunta que te haga el contexto lo obtendras de…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 32,
-    "turnos_claude": 32,
-    "ramas": [
-      "main",
-      "feat/concentrado-comisionistas",
-      "docs/impulse-multi-riel-spec",
-      "HEAD",
-      "diego/sync-ops-catalogo",
-      "diego/jubilar-clientes-homologado",
-      "fix/clabe-085-banregio-extractor",
-      "fix/nomina-colaboradores-groupby",
-      "diego/esquema-detalle-empresa",
-      "feat/alias-grupos-busqueda"
-    ],
-    "primer_prompt": "de cualquier pregunta que te haga el contexto lo obtendras de C:\\obsidian> integrado con este proyecto pero antes en el contexto agrega para subir los cambiis que se hicieron y haz compilado de todas las conversaciones de este vscode de gestion para subirlo y que se actualice lamemoria"
-  },
-  {
-    "file": "2026-07-07 - de cualquier pregunta que te haga el contexto lo obtendras de… [6cb76c34].md",
-    "sessionId": "6cb76c34-18d0-4b90-b5ac-f32721c8ab58",
-    "shortId": "6cb76c34",
-    "fecha": "2026-07-07",
-    "fecha_fin": "2026-07-09",
-    "titulo": "de cualquier pregunta que te haga el contexto lo obtendras de…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 12,
-    "turnos_claude": 11,
-    "ramas": [
-      "main",
-      "feat/concentrado-comisionistas",
-      "fix/clabe-085-banregio-extractor"
-    ],
-    "primer_prompt": "de cualquier pregunta que te haga el contexto lo obtendras de C:\\obsidian"
   },
   {
     "file": "2026-07-07 - OK ESO YA LO ESTAMOS TRABAJANDO EN EL VISUAL, AHORA VAMOS CON EL… [efe94b51].md",
     "sessionId": "efe94b51-51f5-470e-abf8-7ad44533195e",
     "shortId": "efe94b51",
     "fecha": "2026-07-07",
-    "fecha_fin": "2026-07-14",
+    "fecha_fin": "2026-07-21",
     "titulo": "OK ESO YA LO ESTAMOS TRABAJANDO EN EL VISUAL, AHORA VAMOS CON EL…",
     "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 12,
-    "turnos_claude": 12,
+    "turnos_usuario": 29,
+    "turnos_claude": 29,
     "ramas": [
       "main",
       "feat/concentrado-comisionistas",
       "docs/impulse-multi-riel-spec",
       "fix/clabe-085-banregio-extractor",
       "fix/nomina-colaboradores-groupby",
-      "diego/esquema-detalle-empresa"
+      "diego/esquema-detalle-empresa",
+      "feat/sp2-nomina-correo",
+      "diego/f3-metodos-pst",
+      "diego/gastos-clasificacion-real"
     ],
     "primer_prompt": "OK ESO YA LO ESTAMOS TRABAJANDO EN EL VISUAL, AHORA VAMOS CON EL REPORTE DE LOS COMISIONISTAS POR FAVOR, YA TE AGREGUE TAMBIEN LA DE 2026. C:\\Users\\Diego\\Documents\\GitHub\\eli mail\\eli mail\\analisis\\clientes-promotores\\REPORTES 2026\\01 ENERO 2026 NECESITAMOS DE LOS REPORTES PODER SACAR, UN RESUMEN EJECUTIVO POR CADA PESTAÑA, POR INGRESO DE NOMINA, COMISION, COSTOS SOCIALES, NOMINA, GASTOS DE OFICIN"
-  },
-  {
-    "file": "2026-07-06 - ayudame por favor a subir los estados de cuenta de junio 2026, ya los… [f03b328a].md",
-    "sessionId": "f03b328a-2557-4fbb-87d4-3d7a1f9258c1",
-    "shortId": "f03b328a",
-    "fecha": "2026-07-06",
-    "fecha_fin": "2026-07-14",
-    "titulo": "ayudame por favor a subir los estados de cuenta de junio 2026, ya los…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 21,
-    "turnos_claude": 22,
-    "ramas": [
-      "main",
-      "fix/ingesta-junio-2026",
-      "feat/concentrado-comisionistas",
-      "docs/impulse-multi-riel-spec",
-      "diego/esquema-detalle-empresa"
-    ],
-    "primer_prompt": "ayudame por favor a subir los estados de cuenta de junio 2026, ya los acomodamos en la carpeta de C:\\Users\\Diego\\Documents\\GitHub\\gestion react\\gestion financiera\\ESTADOS DE CUENTA PDF\\2026 recuerda que los de arquitectos se suben en la carpeta de C:\\Users\\Diego\\Documents\\GitHub\\gestion react\\gestion financiera\\ESTADOS DE CUENTA PDF\\2026\\ARQUI revisa por favor el algoritmo de automatizacion y los "
-  },
-  {
-    "file": "2026-06-25 - revisa todas las conversaciones de este equipo, archivos modificados,… [4b5e7430].md",
-    "sessionId": "4b5e7430-7c35-4a75-b3e6-afac311e8923",
-    "shortId": "4b5e7430",
-    "fecha": "2026-06-25",
-    "fecha_fin": "2026-07-14",
-    "titulo": "revisa todas las conversaciones de este equipo, archivos modificados,…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 37,
-    "turnos_claude": 38,
-    "ramas": [
-      "diego/tarik-flujo",
-      "main",
-      "diego/hotfix-chatview-merge",
-      "feat/concentrado-comisionistas",
-      "diego/sync-ops-catalogo",
-      "diego/jubilar-clientes-homologado",
-      "fix/clabe-085-banregio-extractor",
-      "diego/esquema-detalle-empresa"
-    ],
-    "primer_prompt": "revisa todas las conversaciones de este equipo, archivos modificados, etc homologa todos los cambios y agregalos a esta rama para subirlos al repo de git"
-  },
-  {
-    "file": "2026-06-24 - vamos a hacer un mini proceso, hay que agregar una pestaña en efectivos… [083c2630].md",
-    "sessionId": "083c2630-4daa-4f55-bd28-3471b3ca2de2",
-    "shortId": "083c2630",
-    "fecha": "2026-06-24",
-    "fecha_fin": "2026-07-07",
-    "titulo": "vamos a hacer un mini proceso, hay que agregar una pestaña en efectivos…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 58,
-    "turnos_claude": 58,
-    "ramas": [
-      "diego/tarik-flujo",
-      "main"
-    ],
-    "primer_prompt": "vamos a hacer un mini proceso, hay que agregar una pestaña en efectivos y externos, que sea impulse, donde vamos a verificar masivamente comprobantes, por ejemplo. C:\\Users\\Diego\\Documents\\GitHub\\gestion react\\gestion financiera\\IMPULSE\\banregio\\040626 UNIENDO 111,770.49.pdf analiza la estructura del documento . la tabla inicia cuando Detalle de Transferencias las cabeceras de las tablas son Secue"
-  },
-  {
-    "file": "2026-06-24 - ok ayudame por favor a revisar que en catalogos en clientes catalogo… [87db4914].md",
-    "sessionId": "87db4914-024c-4cb9-b476-4c9778dc9a05",
-    "shortId": "87db4914",
-    "fecha": "2026-06-24",
-    "fecha_fin": "2026-06-25",
-    "titulo": "ok ayudame por favor a revisar que en catalogos en clientes catalogo…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 14,
-    "turnos_claude": 14,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "ok ayudame por favor a revisar que en catalogos en clientes catalogo global nos muestre tambien coincidencias cuando buscamos por la clabe/cuenta del banco y contempla que pueden tener dos o mas cuentas. y tambien cuando editamos la cuenta que se alcance a ver bien. de igual forma en busqueda global no nos aparece cuando se agrega una nueva cuenta a un cliente, entonces quiero saber si no se actua"
-  },
-  {
-    "file": "2026-06-24 - ayudame a validar si este mini proyecto ya quedo saneado, y de haber… [a0fabf9b].md",
-    "sessionId": "a0fabf9b-ef0f-4b4d-b205-7ab320dce6b8",
-    "shortId": "a0fabf9b",
-    "fecha": "2026-06-24",
-    "fecha_fin": "2026-06-25",
-    "titulo": "ayudame a validar si este mini proyecto ya quedo saneado, y de haber…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 4,
-    "turnos_claude": 4,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "ayudame a validar si este mini proyecto ya quedo saneado, y de haber quedado listo ayudame con el promt de regreso para el chat original por favor Mini-proyecto: corregir los 12 movimientos con signo invertido (cadena de saldos) Corrige 12 movimientos donde dep/ret está invertido → rompen la cadena mes-a-mes por Δ = 2×monto. Long-tail de signos de BBVA (dual-saldo) + relacionados BANBAJIO y BANREG"
-  },
-  {
-    "file": "2026-06-24 - en que tabla tenemos los clientes y subclientes que mostramos en… [c1eda725].md",
-    "sessionId": "c1eda725-7997-4930-abd7-722e163ad773",
-    "shortId": "c1eda725",
-    "fecha": "2026-06-24",
-    "fecha_fin": "2026-06-24",
-    "titulo": "en que tabla tenemos los clientes y subclientes que mostramos en…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 1,
-    "turnos_claude": 1,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "en que tabla tenemos los clientes y subclientes que mostramos en catalogos clientes"
-  },
-  {
-    "file": "2026-06-23 - Mini-proyecto soporte SANTANDER-PYME (2 columnas) [c118c148].md",
-    "sessionId": "c118c148-8c71-49d1-82a3-64b64ebeba16",
-    "shortId": "c118c148",
-    "fecha": "2026-06-23",
-    "fecha_fin": "2026-06-23",
-    "titulo": "Mini-proyecto: soporte SANTANDER-PYME (2 columnas)",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 6,
-    "turnos_claude": 6,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "Mini-proyecto: soporte SANTANDER-PYME (2 columnas) Agrega soporte para el formato \"CUENTA SANTANDER PYME\" (layout 2 columnas) en backend/lib/desfragmentador/nodes/desfragmentador.js, función extraerMovimientosSantander (~L6891). Hoy no se maneja → el saldo arranca de 0 cada mes y la cadena de saldos rompe (SANTANDER 25/41; los 16 rotos son todos OVEDAI, 146 movs). El parser estándar (\"Dinero Creci"
-  },
-  {
-    "file": "2026-06-22 - ayudame por favor a revisar toda la db, para verificar si algun… [32f8e947].md",
-    "sessionId": "32f8e947-d65f-4309-832c-1bfaf99bdf1d",
-    "shortId": "32f8e947",
-    "fecha": "2026-06-22",
-    "fecha_fin": "2026-07-14",
-    "titulo": "ayudame por favor a revisar toda la db, para verificar si algun…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 115,
-    "turnos_claude": 115,
-    "ramas": [
-      "diego/tarik-flujo",
-      "main",
-      "diego/buscar-relacion-haberes-export",
-      "fix/ingesta-junio-2026",
-      "feat/concentrado-comisionistas",
-      "fix/clabe-085-banregio-extractor",
-      "fix/nomina-colaboradores-groupby",
-      "diego/esquema-detalle-empresa"
-    ],
-    "primer_prompt": "ayudame por favor a revisar toda la db, para verificar si algun movimiento tiene la descripcion vacia o nula"
-  },
-  {
-    "file": "2026-06-19 - ayudame por favor a generar un cambio en la pantalla de haberes, cuando… [63ae7da8].md",
-    "sessionId": "63ae7da8-b4f6-405f-a9d0-23885c25693d",
-    "shortId": "63ae7da8",
-    "fecha": "2026-06-19",
-    "fecha_fin": "2026-06-19",
-    "titulo": "ayudame por favor a generar un cambio en la pantalla de haberes, cuando…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 12,
-    "turnos_claude": 12,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "ayudame por favor a generar un cambio en la pantalla de haberes, cuando filtramos por un proveedor https://n8n.datazentrika.com/gestion/?flow=cuentas&tab=grupos&anio=2026 que tengamos la misma vista/flujo que cuando buscamos por un banco/empresa https://n8n.datazentrika.com/gestion/?flow=cuentas&tab=grupos&anio=2026 tener la barra de busqueda, los filtros, de clasificacion, año, mes, relacion, fil"
-  },
-  {
-    "file": "2026-06-19 - ayudame por favor a verificar la clasificacion de los movimientos, hay… [65df6b45].md",
-    "sessionId": "65df6b45-2c8e-439b-a5ec-d6e5b5e32ee9",
-    "shortId": "65df6b45",
-    "fecha": "2026-06-19",
-    "fecha_fin": "2026-06-22",
-    "titulo": "ayudame por favor a verificar la clasificacion de los movimientos, hay…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 2,
-    "turnos_claude": 2,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "ayudame por favor a verificar la clasificacion de los movimientos, hay que hacer uso de las skills de data analisis, y poder clusterizarlos movimientos correctamente, ahorita lo hicimos pero como pruebas pero me gustaria correr un analisis mas serio"
-  },
-  {
-    "file": "2026-06-19 - ayudame por favor a revisar verificar porque en los movimientos no… [ac0c75e3].md",
-    "sessionId": "ac0c75e3-51f7-4c18-b6d9-27428856fdef",
-    "shortId": "ac0c75e3",
-    "fecha": "2026-06-19",
-    "fecha_fin": "2026-07-07",
-    "titulo": "ayudame por favor a revisar/verificar porque en los movimientos no…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 153,
-    "turnos_claude": 153,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "ayudame por favor a revisar/verificar porque en los movimientos no tenemos la relacion en algunos documentos que ya sabemos que son de tarik o de catania, eso no se hacia ya automaticamente en flujo de automatizacion ?"
-  },
-  {
-    "file": "2026-06-16 - AYUDAME A QUE CUANDO ESTAMOS EN LA PANTALLA DE CATALOGOS EN CLIENTES,… [9cbc9f08].md",
-    "sessionId": "9cbc9f08-6d72-4b00-8ef9-66fcc977b2c1",
-    "shortId": "9cbc9f08",
-    "fecha": "2026-06-16",
-    "fecha_fin": "2026-06-17",
-    "titulo": "AYUDAME A QUE CUANDO ESTAMOS EN LA PANTALLA DE CATALOGOS EN CLIENTES,…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 7,
-    "turnos_claude": 7,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "AYUDAME A QUE CUANDO ESTAMOS EN LA PANTALLA DE CATALOGOS EN CLIENTES, SI NOS MUESTRE CUANTOS MOVIMIENTOS TIENE CADA CLIENTE, Y EL SALDO, ASI COMO LO MOSTRAMOS EN HABERES EN CLIENTES"
-  },
-  {
-    "file": "2026-06-15 - . inicio-trabajo.ps1 tarik-diego [4e6eb9ff].md",
-    "sessionId": "4e6eb9ff-9ff0-4fb3-9538-732f78d126cb",
-    "shortId": "4e6eb9ff",
-    "fecha": "2026-06-15",
-    "fecha_fin": "2026-06-18",
-    "titulo": "./inicio-trabajo.ps1 tarik-diego",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 8,
-    "turnos_claude": 8,
-    "ramas": [
-      "main",
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "./inicio-trabajo.ps1 tarik-diego analiza por favor como tenemos el flujo de tarik, las frontales, la pestaña de efectivo movimientos de caja y tarik saldos y retornos por favor. tambien verifica que ya estamos actualizados con el git e inicia una nueva branch para empezar a trabajar en este flujo"
-  },
-  {
-    "file": "2026-06-15 - clabesnuevaspordaralta.csv [b5d0d079].md",
-    "sessionId": "b5d0d079-6383-4534-bb28-5eb19913d905",
-    "shortId": "b5d0d079",
-    "fecha": "2026-06-15",
-    "fecha_fin": "2026-06-17",
-    "titulo": "clabesnuevaspordaralta.csv",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 3,
-    "turnos_claude": 3,
-    "ramas": [
-      "diego/tarik-flujo"
-    ],
-    "primer_prompt": "clabes_nuevas_por_dar_alta.csv son cuentas, colaboradores de clientes que no tenemos registrados, ayudame por favor a verificar que esos clientes existan , los que necesitamos agregar son los que estan EN PERIODO (2025-2026). te puedes conectar a la db por medio de ssh n8n-tickets"
-  },
-  {
-    "file": "2026-06-12 - en busqueda global ayudame a que podamos buscar por el uuid del… [4e5966a5].md",
-    "sessionId": "4e5966a5-89e3-4def-aa02-eebb133b61c1",
-    "shortId": "4e5966a5",
-    "fecha": "2026-06-12",
-    "fecha_fin": "2026-07-07",
-    "titulo": "en busqueda global ayudame a que podamos buscar por el uuid del…",
-    "proyecto": "Gestión (Tesorería)",
-    "turnos_usuario": 8,
-    "turnos_claude": 8,
-    "ramas": [
-      "main",
-      "diego/chat-adjuntos",
-      "diego/flujo-y-scripts"
-    ],
-    "primer_prompt": "en busqueda global ayudame a que podamos buscar por el uuid del movimiento be1b2fdc-31fa-4391-9858-81d3d7da9afa. y tambien dime como subir solo lso archivos que modifiquemos porque ya estamos trabajando 2 personas en el proyecto y no queremos romper nada"
   }
 ]
